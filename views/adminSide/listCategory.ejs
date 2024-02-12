@@ -1,0 +1,114 @@
+<%- include('../layouts/header.ejs') %>
+            <section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Category</h2>
+                       
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Search order ID" class="form-control bg-white" />
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <header class="card-header">
+                        <div class="row gx-3">
+                            <div class="col-lg-4 col-md-6 me-auto">
+                                <input type="text" placeholder="Search..." class="form-control" />
+                            </div>
+                            <!-- <div class="col-lg-2 col-6 col-md-3">
+                                <select class="form-select">
+                                    <option>Status</option>
+                                    <option>Active</option>
+                                    <option>Disabled</option>
+                                    <option>Show all</option>
+                                </select>
+                            </div> -->
+                            <div class="col-lg-2 col-6 col-md-3">
+                                <a href="/admin/addCategory" class="green-box" id="createNewLink">
+                                    Create New
+                                </a>
+                            </div>                                                      
+                        </div>
+                    </header>
+                    <!-- card-header end// -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Sl no</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Edit</th>h
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (let i = 0; i < categories.length; i++) { %>
+                                        <tr>
+                                            <td><%= i + 1 %></td>
+                                            <td><%= categories[i].name %></td>
+                                            <td><%= categories[i].description %></td>
+                                            <td><%= categories[i].status ? 'Active' : 'Inactive' %></td>
+                                            <!-- Add other columns as needed -->
+                                            <td>
+                                                <a href="/admin/editCategory/<%= categories[i]._id %>" class="btn btn-primary btn-sm">Edit</a>
+                                                <!-- Adjust the link to match your routing structure and include category ID -->
+                                            </td>
+                                            <td>
+                                                <form method="post" action="/admin/changeCategoryStatus/<%= categories[i]._id %>" style="display: inline-block;">
+                                                    <button type="submit" class="btn btn-info btn-sm">
+                                                        <%= categories[i].status ? 'Unlist' : 'List' %>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- table-responsive //end -->
+                    </div>
+                    <!-- card-body end// -->
+                </div>
+                <!-- card end// -->
+                <div class="pagination-area mt-15 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                            <li class="page-item"><a class="page-link" href="#">02</a></li>
+                            <li class="page-item"><a class="page-link" href="#">03</a></li>
+                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">16</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="statSheet/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="statSheet/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="statSheet/js/vendors/select2.min.js"></script>
+        <script src="statSheet/js/vendors/perfect-scrollbar.js"></script>
+        <script src="statSheet/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="statSheet/js/main.js?v=1.1" type="text/javascript"></script>
+    </body>
+</html>

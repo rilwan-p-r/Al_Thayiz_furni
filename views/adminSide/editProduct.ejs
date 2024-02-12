@@ -1,0 +1,139 @@
+<%- include('../layouts/header.ejs') %>
+            <section class="content-main">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="content-header">
+                            <h2 class="content-title">Add New Product</h2>
+                            <!-- <div>
+                                <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                                <button class="btn btn-md rounded font-sm hover-up">Publich</button>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Basic</h4>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="/admin/editProduct"  enctype="multipart/form-data">
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label">Product title</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name" value="<%=product.name%>" />
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Full description</label>
+                                        <textarea placeholder="Type here" class="form-control" rows="4" name="description" ><%=product.description%></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Price</label>
+                                                <div class="row gx-2">
+                                                    <input placeholder="$" type="text" class="form-control" name="price" value="<%=product.price%>" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Quantity</label>
+                                                <input placeholder="$" type="text" class="form-control" name="quantity" value="<%=product.quantity%>" />
+                                                <input type="hidden" name="productId" value="<%=product._id%>">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Category</label>
+                                            <select class="form-select" name="category">
+                                                <% for (let i = 0; i < categories.length; i++) { %>
+                                                    <option value="<%= categories[i]._id %>" <%= product.category.equals(categories[i]._id) ? 'selected' : '' %>><%= categories[i].name %></option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Product Image</label>
+                                        <input type="file" class="form-control" name="product_images" accept="image/*" multiple onchange="displaySelectedImages(this)" />
+                                        <% for (let i = 0; i < product.productImages.length; i++) { %>
+                                            <div class="image-container">
+                                                <img src="/uploads/resized/<%= product.productImages[i] %>" alt="Product Image" class="img-thumbnail" style="width: 50px; height: 50px;" >
+                                                <a href="#" onclick="deleteImage('<%= product.productImages[i] %>')">Delete</a>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                    <!-- Add a container to display selected images -->
+                                    <div id="selectedImagesContainer" class="d-flex flex-wrap"></div>
+                                    <button type="submit" class="btn btn-success text-white" id="addProductButton">Add Product</button>
+                                </form>
+                            </div>
+                        </div>
+                      </div>
+                    
+                    </div>
+                </div>
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="statSheet/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="statSheet/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="statSheet/js/vendors/select2.min.js"></script>
+        <script src="statSheet/js/vendors/perfect-scrollbar.js"></script>
+        <script src="statSheet/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="statSheet/js/main.js?v=1.1" type="text/javascript"></script>
+        <!-- Add the following script at the end of your HTML body or in a separate JavaScript file -->
+        <script>
+            function displaySelectedImages(input) {
+                const container = document.getElementById("selectedImagesContainer");
+                container.innerHTML = ''; // Clear previous selected images
+                    if (input.files) {
+                    const files = input.files;
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const reader = new FileReader();
+                            reader.onload = function (e) {
+                            const img = document.createElement("img");
+                            img.src = e.target.result;
+                            img.classList.add("img-thumbnail", "m-1");
+                            img.style.width = "100px"; // Set the width as needed
+                            img.style.height = "100px"; // Set the height as needed
+                            container.appendChild(img);
+                        };
+                            reader.readAsDataURL(file);
+                    }
+                }
+            }
+        </script>
+        <script>
+            function deleteImage(imagePath) {
+                fetch(`/admin/deleteImage?imagePath=${imagePath}`, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const imageContainer = document.querySelector(`[src="/uploads/resized/${imagePath}"]`).parentElement;
+                        imageContainer.remove();
+                    } else {
+                        console.error('Image deletion failed:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        </script>
+        
+
+    </body>
+</html>

@@ -1,0 +1,76 @@
+<%- include('../layouts/header.ejs') %>
+            <section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Ordered products</h2>
+                       
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Search order ID" class="form-control bg-white" />
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <!-- -----orders List----- -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Product</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Total</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (orderDetails && orderDetails.products && Array.isArray(orderDetails.products)) { %>
+                                        <% for (const product of orderDetails.products) { %>
+                                            <tr>
+                                                <td>
+                                                    <% if (product.productImages && product.productImages.length > 0) { %>
+                                                        <br>
+                                                        <img src="/uploads/resized/<%= product.productImages[0] %>" alt="Product Image" class="img-thumbnail" style="width: 100px; height: 100px;">
+                                                    <% } %> <br><span><%= product.productName %></span>
+                                                </td>
+                                                <td>x<%= product.quantity %></td>
+                                                <td>$<%= product.price %></td>
+                                                <td><%= product.quantity * product.price %></td>
+                                            </tr>
+                                        <% } %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="4">No products found</td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- card-body end// -->
+                </div>
+          </section>
+            <!-- content-main end// -->
+            <!-- <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer> -->
+        </main>
+        <script src="statSheet/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="statSheet/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="statSheet/js/vendors/select2.min.js"></script>
+        <script src="statSheet/js/vendors/perfect-scrollbar.js"></script>
+        <script src="statSheet/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="statSheet/js/main.js?v=1.1" type="text/javascript"></script>
+    </body>
+</html>

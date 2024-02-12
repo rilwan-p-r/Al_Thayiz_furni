@@ -1,0 +1,92 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+  }
+  
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f0f0f0;
+  }
+  
+  :where(.container, form, .inputs, header) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .container {
+    background-color: #fff;
+    padding: 30px 65px;
+    border-radius: 12px;
+    row-gap: 20px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .container header {
+    width: 65px;
+    height: 65px;
+    background-color: #5ce3cb;
+    border-radius: 50%;
+  }
+  
+  .container h3 {
+    font-size: 1.3em;
+    color: #333;
+  }
+  
+  form {
+    row-gap: 30px;
+  }
+  
+  form .inputs {
+    flex-direction: row;
+    justify-content: center;
+    column-gap: 10px;
+  }
+  
+  form .inputs input {
+    height: 45px;
+    width: 45px;
+    outline: none;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  
+  form .inputs input::placeholder {
+    color: #999;
+  }
+  
+  form .inputs input::-webkit-inner-spin-button,
+  form .inputs input::-webkit-outer-spin-button {
+    display: none;
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 8px;
+    outline: none;
+    background: #6ffde3;
+    color: #fff;
+    border: none;
+    font-size: 1.2rem;
+    transition: 0.3s ease;
+  }
+  
+  .btn.active {
+    background: #509185;
+  }
+  
+  .btn:hover {
+    background: #5ce3cb;
+  }
+  

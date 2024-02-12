@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .otp-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .otp-input {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            margin: 0 5px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .otp-submit {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .otp-resend {
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="otp-container">
+        <div class="signin"> 
+            <% if (messages.error && messages.error.length > 0) { %>
+              <div class="flash-message error">
+                <% messages.error.forEach(function(msg) { %>
+                  <p style="color: red; font-size: 18px;"><strong><%= msg %></strong></p>
+                <% }); %>
+              </div>
+            <% } %>
+            <span id="timer" style="color: orange;  "></span>
+        <h2>OTP Verification</h2>
+        <p>Enter the OTP sent to your email:</p>
+        <form method="post">
+            <input type="text" class="otp-input" name="digit1" maxlength="1" required>
+            <input type="text" class="otp-input" name="digit2" maxlength="1" required>
+            <input type="text" class="otp-input" name="digit3" maxlength="1" required>
+            <input type="text" class="otp-input" name="digit4" maxlength="1" required>
+            <input type="text" class="otp-input" name="digit5" maxlength="1" required>
+            <!-- <input type="text" class="otp-input" name="digit6" maxlength="1" required> -->
+            <input type="hidden" name="email" value="<%=email%>" >
+            
+          <span id="span" style="color: red; display: none; margin-top: 16px">otp expired.Please click the ResendOTP button to resend the OTP</span>
+          <button id="btn" onclick="resendOTP()" style="display: none; margin-left: 105px; margin-top: 18px;">Resend OTP</button>
+          <!-- <button onclick="resendOTP()" style="display: none;" class="otp-submit">Verify OTP</button> -->
+          <p id="p" style="display: none;"><%= email %></p>
+            <br>
+            <button type="submit" class="otp-submit">Verify OTP</button>
+        </form>
+        <!-- <p class="otp-resend">Resend OTP</p> -->
+    </div>
+    <script>
+        let timer=60
+        startTimer()
+
+        function startTimer() {
+            if(timer<0){
+                console.log("Timer is 0");
+                displayResendOTPButton()
+                return
+            }
+            document.getElementById('timer').innerHTML=`${timer} seconds`
+            timer--
+
+            setTimeout(startTimer,1000)
+        }
+
+        async function displayResendOTPButton() {
+          // Display the resend OTP button and message
+          document.getElementById('span').style.display = 'block';
+          document.getElementById('btn').style.display = 'block';
+  
+          // Fetch to delete OTP on the server side
+          const emailElement = document.getElementById('p');
+          const email = emailElement.textContent.trim();
+          try {
+              const response = await fetch('/delete-otp', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ email }),
+              });
+              const data = await response.json();
+              console.log(data);
+          } catch (error) {
+              console.error('Error:', error);
+          }
+      }
+
+
+      function resendOTP() {
+        // You can perform any necessary actions here to resend the OTP
+        console.log('Resending OTP...');
+        document.getElementById('span').style.display = 'none';
+        document.getElementById('btn').style.display = 'none';
+        event.preventDefault();
+        // For example, you might want to make a fetch request to your server
+        // to trigger the OTP resend functionality.
+        const emailElement = document.getElementById('p');
+        const email = emailElement.textContent.trim();
+        console.log(email);
+        fetch('/resend-otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('OTP Resent:', data);
+            // Optionally, you can update the UI or show a success message
+            // alert('OTP Resent Successfully!');
+        })
+        .catch(error => {
+            console.error('Error Resending OTP:', error);
+            // Handle any errors or display an error message
+            // alert('Error Resending OTP. Please try again.');
+        });
+        location.reload()
+    }
+
+    </script>
+</body>
+
+</html>

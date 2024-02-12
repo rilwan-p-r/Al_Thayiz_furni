@@ -1,0 +1,86 @@
+<%- include("../layouts/header.ejs") %>
+<section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Edit Order</h2>
+                        </div>
+                  
+                </div>
+                <!-- <div class="card">
+                    <div class="card-body">
+                        <div class="row"> -->
+                            <div class="col-md-3">
+                                <form action="/admin/editOrderStatus"  id="editOrderForm" method="post">
+                                    <div class="mb-4">
+                                        <input type="hidden" name="orderId" value="<%= orderDetails._id %>">
+
+                                        <label for="product_details" class="form-label">Product Details</label>
+                                        <% orderDetails.products.forEach(product => { %>
+                                            <div>
+                                                <p>Name: <%= product.productName %></p>
+                                                <p>Quantity: <%= product.quantity %></p>
+                                                <p>Price: <%= product.price %></p>
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="total_amount" class="form-label">Total Amount</label>
+                                        <input type="text" class="form-control" id="total_amount" value="<%= orderDetails.totalAmount %>" readonly>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="shipping_address" class="form-label">Shipping Address</label>
+                                        <p>Name: <%= orderDetails.shippingAddress.name %></p>
+                                        <p>Mobile: <%= orderDetails.shippingAddress.mobile %></p>
+                                        <p>Pincode: <%= orderDetails.shippingAddress.pincode %></p>
+                                        <p>Address: <%= orderDetails.shippingAddress.address %></p>
+                                        <p>City: <%= orderDetails.shippingAddress.city %></p>
+                                        <p>State: <%= orderDetails.shippingAddress.state %></p>
+                                        <p>Landmark: <%= orderDetails.shippingAddress.landmark %></p>
+                                        <p>Alternate Mobile: <%= orderDetails.shippingAddress.alternateMobile %></p>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="payment_method" class="form-label">Payment Method</label>
+                                        <input type="text" class="form-control" id="payment_method" value="<%= orderDetails.paymentMethod %>" readonly>
+                                    </div>
+                                                                                                           
+                                    <div class="mb-4">
+                                        <label for="order_date" class="form-label">Order Date</label>
+                                        <input type="text" class="form-control" id="order_date" value="<%= new Date(orderDetails.orderDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>" readonly>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="newStatus" class="form-label">Order status</label>
+                                        <select name="newStatus" class="form-select" required>
+                                            <option value="Processing" <%= orderDetails.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                                            <option value="Out of delivery" <%= orderDetails.status === 'Out of delivery' ? 'selected' : '' %>>Out of Delivery</option>
+                                            <option value="Delivered" <%= orderDetails.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                        </select>
+                                    </div>
+                                
+                                   <a href="#" class="btn btn-primary" id="updateOrderLink">UPDATE</a>
+                                  
+                                </form>
+                            </div>
+                        
+                <!-- card .// -->
+            </section>
+            <!-- content-main end// -->
+        
+        </main>
+        <script src="/statSheet/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/statSheet/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/statSheet/js/vendors/select2.min.js"></script>
+        <script src="/statSheet/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/statSheet/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="/statSheet/js/main.js?v=1.1" type="text/javascript"></script>
+    </body>
+</html>
+<script>
+    document.getElementById('updateOrderLink').addEventListener('click', function() {
+        document.getElementById('editOrderForm').submit();
+    });
+</script>

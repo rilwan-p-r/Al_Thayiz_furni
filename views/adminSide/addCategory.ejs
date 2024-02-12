@@ -1,0 +1,87 @@
+<%- include('../layouts/header.ejs') %>
+            <section class="content-main">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="content-header">
+                            <h2 class="content-title">Add new category</h2>
+                          
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Enter the details</h4>
+                                <% if (messages.error) { %>
+                                    <div class="alert alert-danger" role="alert">
+                                        <%= messages.error %>
+                                    </div>
+                                <% } %>
+                                <% if (messages.success) { %>
+                                    <div class="alert alert-success" role="alert">
+                                        <%= messages.success %>
+                                    </div>
+                                <% } %>
+                                
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="/admin/addCategory">
+                                    <div class="mb-4">
+                                        <% if (editMode) { %>
+                                            <!-- If in edit mode, display the category ID -->
+                                            <input type="hidden" name="editMode" value="true" />
+                                            <input type="hidden" name="categoryId" value="<%= category._id %>" />
+                                        <% } else { %>
+                                            <!-- If not in edit mode, display the category creation fields -->
+                                            <input type="hidden" name="editMode" value="false" />
+                                        <% } %>
+                                
+                                        <div class="mb-4">
+                                            <label for="product_name" class="form-label">Name</label>
+                                            <input type="text" placeholder="Type here" class="form-control" id="product_name" name="name" value="<%= editMode ? category.name : '' %>" />
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Full description</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="description"><%= editMode ? category.description : '' %></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-success text-white" id="createCategoryButton">
+                                            <%= editMode ? 'Update Category' : 'Create Category' %>
+                                        </button>
+                                    </div>
+                                </form>                                
+                                
+                            </div>
+                        </div>
+                 
+                            </div>
+                        </div>
+                        <!-- card end// -->
+                    </div>
+                </div>
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="/statSheet/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/statSheet/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/statSheet/js/vendors/select2.min.js"></script>
+        <script src="/statSheet/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/statSheet/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="/statSheet/js/main.js?v=1.1" type="text/javascript"></script>
+
+<!-- Add SweetAlert script -->
+
+    </body>
+</html>

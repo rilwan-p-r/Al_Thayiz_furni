@@ -1,0 +1,184 @@
+<%- include('../layouts/header.ejs') %>
+<style>
+    .list-green {
+        color: white;
+        background-color: green;
+        padding: 5px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-left: 5px;
+    }
+
+    .unlist-red {
+        color: white;
+        background-color: red;
+        padding: 5px;
+        border-radius: 5px;
+        text-decoration: none; 
+        margin-left: 5px;
+    }
+    .fixed-width {
+  width: 60px; /* Adjust the width as needed */
+}
+
+
+</style>
+            <section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Users List</h2>
+                        <!-- <p>Lorem ipsum dolor sit amet.</p> -->
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Search order ID" class="form-control bg-white" />
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <header class="card-header">
+                        <div class="row gx-3">
+                            <div class="col-lg-4 col-md-6 me-auto">
+                                <input type="text" placeholder="Search..." class="form-control" />
+                            </div>
+                            <!-- <div class="col-lg-2 col-6 col-md-3">
+                                <select class="form-select">
+                                    <option>Status</option>
+                                    <option>Active</option>
+                                    <option>Disabled</option>
+                                    <option>Show all</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-6 col-md-3">
+                                <select class="form-select">
+                                    <option>Show 20</option>
+                                    <option>Show 30</option>
+                                    <option>Show 40</option>
+                                </select>
+                            </div> -->
+                        </div>
+                    </header>
+                    <!-- card-header end// -->
+                    <div class="card-body">
+                        <!-- <div class="table-responsive"> -->
+                            <form action="/admin/blockUsers" method="post">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <!-- <th>#ID</th> -->
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Mobile</th>
+                                        <th scope="col">IsVerified</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col" class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (let i = 0; i < users.length; i++) { %>
+                                        <tr>
+                                            <!-- <td><%= users[i].id %></td> -->
+                                            <td><b><%= users[i].name %></b></td>
+                                            <td><%= users[i].email %></td>
+                                            <td><%= users[i].mobile %></td>
+                                            <td><span class="badge rounded-pill alert-warning"><%= users[i].isVerified %></span></td>
+                                            <td><%= users[i].isBlocked ? 'NonActive' : 'ACTIVE' %></td>
+                                            <td class="text-end">
+                                               <!-- <% if (users[i].isblocked) { %>
+                                                <button id="btn-unblock" data-user-id="<%- users[i]._id %>" class="btn btn-md rounded font-sm" >Unblock</button>
+                                            <% } else { %>
+                                                <button id="btn-block" data-user-id="<%- users[i]._id %>" class="btn btn-md rounded font-sm" >Block</button>
+                                            <% } %> -->
+                                    
+                                            <!-- Change your existing button code to the following -->
+                                          <a href="/admin/blockUser/<%= users[i]._id%>" class="list-toggle-button btn btn-sm font-sm fixed-width <%= users[i].isBlocked ? 'unlist-red' : 'list-green'%>">
+                                          <%= users[i].isBlocked ? 'Unblock' : 'Block' %>
+                                              </a>
+
+                                            </td>
+                                        </tr>
+                                    <% } %>                                        
+                                         </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </form>
+                        <!-- </div> -->
+                        <!-- table-responsive //end -->
+                    </div>
+                    <!-- card-body end// -->
+                </div>
+                <!-- card end// -->
+                <!-- <div class="pagination-area mt-15 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                            <li class="page-item"><a class="page-link" href="#">02</a></li>
+                            <li class="page-item"><a class="page-link" href="#">03</a></li>
+                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">16</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div> -->
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="statSheet/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="statSheet/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="statSheet/js/vendors/select2.min.js"></script>
+        <script src="statSheet/js/vendors/perfect-scrollbar.js"></script>
+        <script src="statSheet/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="statSheet/js/main.js?v=1.1" type="text/javascript"></script>
+        <!-- <script>
+           document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.block-button').forEach(button => {
+        button.addEventListener('click', async () => {
+            console.log('Block button clicked');
+            const userId = button.dataset.userId;
+            console.log('UserID:', userId);
+            const isBlocked = button.innerText.toLowerCase() === 'block';
+
+            try {
+                const response = await fetch('/admin/blockUsers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        [isBlocked ? 'blockUserId' : 'unblockUserId']: userId,
+                    }),
+                });
+
+                console.log('Response:', response);
+
+                if (response.ok) {
+                    console.log('Block/unblock successful');
+                    // Update button text and class here
+                } else {
+                    console.error('Failed to block/unblock user');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+});
+
+        </script>         -->
+    </body>
+</html>

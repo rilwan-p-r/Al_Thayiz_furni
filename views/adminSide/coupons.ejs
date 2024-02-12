@@ -1,0 +1,133 @@
+<%- include('../layouts/header.ejs') %> 
+
+            <section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Coupons</h2>
+                        
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <form id="createCouponForm" method="POST">
+                                    <div class="mb-4">
+                                        <label for="Coupon_title" class="form-label">Coupon Title</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Coupon_title" name="title" />
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="Coupon_code" class="form-label">Coupon Code</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Coupon_code" name="code" />
+                                        <div id="codeError" style="color: red; display: none;">Coupon code must have at least three characters and contain at least one number.</div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="Coupon_discount" class="form-label">Discount Amount</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Coupon_discount" name="discount" />
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="Coupon_description" class="form-label">Description</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Coupon_description" name="description" />
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="Coupon_expiry" class="form-label">Expiry Date</label>
+                                        <input type="date" class="form-control" id="Coupon_expiry" name="expiryDate" />
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Create Coupon</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                
+                                                <th>Name</th>
+                                                <th>Code</th>
+                                                <th>Discount</th>
+                                                <th>Expiry Date</th>
+                                                <th>isActive</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% coupons.forEach(coupon => { %>
+                                                <tr>
+                                                    <td><%= coupon.title %></td>
+                                                    <td><%= coupon.code %></td>
+                                                    <td><%= coupon.discount %></td>
+                                                    <td><%= new Date(coupon.expiryDate).toISOString().split('T')[0] %></td>
+                                                    <td><%= coupon.status %></td>
+                                                    <td>
+                                                        <a href="/admin/editCoupon/<%= coupon._id %>" style="color: green;">Edit</a>
+                                                        <a href="/admin/deleteCoupon/<%= coupon._id %>" style="color: red;" onclick="return confirm('Are you sure you want to delete this coupon?')">Delete</a>
+                                                    </td>
+                                                    
+                                                </tr>
+                                            <% }); %>
+                                           
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- .col// -->
+                        </div>
+                        <!-- .row // -->
+                    </div>
+                    <!-- card body .// -->
+                </div>
+                <!-- card .// -->
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="statSheet/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="statSheet/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="statSheet/js/vendors/select2.min.js"></script>
+        <script src="statSheet/js/vendors/perfect-scrollbar.js"></script>
+        <script src="statSheet/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="statSheet/js/main.js?v=1.1" type="text/javascript"></script>
+
+        <script>
+            document.getElementById('createCouponForm').addEventListener('submit', async (event) => {
+                event.preventDefault();
+        
+                const codeInput = document.getElementById('Coupon_code').value;
+                const codeError = document.getElementById('codeError');
+        
+                // Validate coupon code
+                const isValidCode = isValidCouponCode(codeInput);
+                if (!isValidCode) {
+                    // Show error message
+                    codeError.style.display = 'block';
+                    return;
+                }
+        
+                event.target.submit();
+            });
+        
+            //validate coupon code
+            function isValidCouponCode(code) {
+                return code.length >= 3 && /\d/.test(code);
+            }
+        </script>
+    </body>
+</html>

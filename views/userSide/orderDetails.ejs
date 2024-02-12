@@ -1,0 +1,171 @@
+<%- include("./profileHeader.ejs") %>
+
+<div class="container light-style flex-grow-1 container-p-y">
+    <h4 class="font-weight-bold py-3 mb-4 " style="margin-top: 110px;">
+        MY PROFILE
+    </h4>
+    <div class="card overflow-hidden">
+        <div class="row no-gutters row-bordered row-border-light">
+            <div class="col-md-3 pt-0">
+                <div class="list-group list-group-flush account-settings-links">
+                    <a class="list-group-item list-group-item-action" href="/userProfile">PROFILE</a>
+                    <a class="list-group-item list-group-item-action" href="/editUserProfile">EDIT PROFILE</a>
+                    <a class="list-group-item list-group-item-action" href="#">CHANGE PASSWORD</a>
+                    <a class="list-group-item list-group-item-action active" href="/orderDetails">ORDER</a>
+                    <a class="list-group-item list-group-item-action" href="/addressManage">MANAGE ADDRESS</a>
+                    <a class="list-group-item list-group-item-action" href="#"></a>
+                    <a class="list-group-item list-group-item-action" href="#"></a>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">order ID</th>
+                                <th scope="col">Paymet Method</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Order Date</th>
+                                <th scope="col">View</th>
+                                <% if (orderDetails.some(order => order.status !== 'Returned')) { %>
+                                    <th scope="col">Action</th>
+                                <% } %>
+                            </tr>
+                        </thead>
+                        <%
+                          orderDetails.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+                         %>
+                        <tbody>
+                            <% for (const order of orderDetails) { %>
+                                <tr>
+                                    <td style="color: green;">
+                                        <%= order._id %>
+                                    </td>
+                                    
+                                    <td><%= order.paymentMethod %></td>
+                                    <td style="color: green;">
+                                        <%= order.totalAmount %>
+                                    </td>
+                                    
+                                    <td class="<%= order.status === 'Delivered' ? 'delivered-status' : (order.status === 'Out of delivery' ? 'out-of-delivery-status' : 'default-status') %>">
+                                        <%= order.status %>
+                                    </td>
+                                    
+                                         
+                                    <td>
+                                        <%= order.shippingAddress.name %><br>
+                                        <%= order.shippingAddress.address %><br>
+                                        <%= order.shippingAddress.mobile %><br>
+                                        <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.pincode %>
+                                    </td>
+                                    <td><%= new Date(order.orderDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
+                                    <td><a href="/viewProducts/<%= order._id%>">View</a></td>
+                                    <% if (order.status !== 'Returned') { %>
+                                        <td>
+                                            <% if (order.status === 'Delivered' && !order.returnRequest) { %>
+                                                <button id="returnButton_<%= order._id %>" class="btn btn-dark" onclick="returnOrder('<%= order._id %>')">Return</button>
+                                            <% } else if (order.returnRequest) { %>
+                                                <button id="cancelReturnButton_<%= order._id %>" class="btn btn-danger" onclick="cancelReturn('<%= order._id %>')">Cancel Return</button>
+                                            <% } else if (order.status !== 'Cancelled') { %>
+                                                <button class="btn btn-danger" onclick="cancelOrder('<%= order._id %>')">Cancel</button>
+                                            <% } %>
+                                        </td>
+                                    <% } %>
+                                      
+                                      
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </div>
+  
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript"></script>
+<!-- jquery plugins here-->
+<script src="/js/jquery-1.12.1.min.js"></script>
+<!-- popper js -->
+<script src="/js/popper.min.js"></script>
+<!-- bootstrap js -->
+<script src="/js/bootstrap.min.js"></script>
+<!-- easing js -->
+<script src="/js/jquery.magnific-popup.js"></script>
+<!-- swiper js -->
+<script src="/js/swiper.min.js"></script>
+<!-- swiper js -->
+<script src="/js/masonry.pkgd.js"></script>
+<!-- particles js -->
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/jquery.nice-select.min.js"></script>
+<!-- slick js -->
+<script src="/js/slick.min.js"></script>
+<script src="/js/jquery.counterup.min.js"></script>
+<script src="/js/waypoints.min.js"></script>
+<script src="/js/contact.js"></script>
+<script src="/js/jquery.ajaxchimp.min.js"></script>
+<script src="/js/jquery.form.js"></script>
+<script src="/js/jquery.validate.min.js"></script>
+<script src="/js/mail-script.js"></script>
+<!-- custom js -->
+<script src="/js/custom.js"></script>
+
+<script>
+    function cancelOrder(orderId) {
+      $.ajax({
+        url: `/cancelOrder/${orderId}`,
+        type: 'POST',
+        success: function (data) {
+          console.log(data.message);
+          location.reload();
+        },
+        error: function (error) {
+          console.error('Error canceling order:', error);
+        }
+      });
+    }
+  </script>
+
+<script>
+    function returnOrder(orderId) {
+        $.ajax({
+            url: `/returnOrder/${orderId}`,
+            type: 'POST',
+            success: function (data) {
+                console.log(data.message);
+                location.reload();
+            },
+            error: function (error) {
+                console.error('Error returning order:', error);
+            }
+        });
+    }
+
+    function cancelReturn(orderId) {
+        $.ajax({
+            url: `/cancelReturn/${orderId}`,
+            type: 'POST',
+            success: function (data) {
+                console.log(data.message);
+                location.reload();
+            },
+            error: function (error) {
+                console.error('Error cancelling return:', error);
+            }
+        });
+    }
+</script>
+
+  
+  
+
+</body>
+
+</html>

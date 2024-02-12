@@ -1,0 +1,365 @@
+<%-include("./header.ejs")%>
+  <!-- Header part end-->
+
+
+  <!--================Home Banner Area =================-->
+  <!-- breadcrumb start-->
+  <div id="reloadDiv">
+    <section class="breadcrumb breadcrumb_bg">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="breadcrumb_iner">
+                        <div class="breadcrumb_iner_item">
+                            <h2>Cart Products</h2>
+                            <p>Home <span>-</span>Cart Products</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- breadcrumb start-->
+
+    <!--================Cart Area =================-->
+    <section class="cart_area padding_top">
+        <div class="container">
+            <div class="cart_inner">
+                <div class="table-responsive">
+                    <% if (cartDetails && cartDetails.items && Array.isArray(cartDetails.items) && cartDetails.items.length > 0) { %>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="product-image" style="font-weight: bold;">PRODUCT</th>
+                                    <th scope="product-name" style="font-weight: bold;">NAME</th>
+                                    <th scope="product-price" style="font-weight: bold;">PRICE</th>
+                                    <th scope="product-quantity" style="font-weight: bold;">QUANTITY</th>
+                                    <th scope="product-total" style="font-weight: bold;">TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% let totalQuantity=0; let totalProductPrice=0; cartDetails.items.forEach((cartItem)=> {
+                                    const itemTotalPrice = cartItem.product_id.price * cartItem.quantity;
+                                    totalQuantity += cartItem.quantity;
+                                    totalProductPrice += itemTotalPrice;
+                                %>
+                                <tr>
+                                    <td class="product-image"> <a href="#">
+                                            <img src="/uploads/resized/<%=cartItem.product_id.productImages[0] %>"
+                                                alt="" style="width: 100px; height: auto;">
+                                        </a>
+                                    </td>
+                                    <!-- Example row displaying name, price, quantity, and total -->
+                                    <td>
+                                        <%= cartItem.product_id.name %>
+                                    </td>
+                                    <td>₹<%= cartItem.product_id.price %></td>
+                                    <td>
+                                      <div style="display: flex; align-items: center;">
+                                          <% if (cartItem.product_id.quantity > 1) { %>
+                                          <button type="button" style="font-weight: bold;"
+                                              class="btn btn-light btn-sm"
+                                              onclick="changeQuantity('<%= cartItem._id %>','<%= cartItem.product_id._id %>', '-1', '<%= cartItem._id %>', '<%= cartItem.product_id.quantity %>')">-</button>
+                                          <% } else { %>
+                                          <button style="color: rgb(215, 215, 215);" disabled type="button"
+                                              class="btn btn-light btn-sm"
+                                              onclick="changeQuantity('<%= cartItem._id %>','<%= cartItem.product_id._id %>', '1', '<%= cartItem._id %>', '<%= cartItem.product_id.quantity %>')">-</button>
+                                          <% } %>
+                                  
+                                          <p id="quantity-<%= cartItem._id %>"
+                                              style="margin: 0 10px;"><%= cartItem.quantity %></p>
+                                          <button type="button" style="font-weight: bold;"
+                                              class="btn btn-light btn-sm"
+                                              onclick="changeQuantity('<%= cartItem._id %>','<%= cartItem.product_id._id %>', '1', '<%= cartItem._id %>', '<%= cartItem.product_id.quantity %>')">+</button>
+                                      </div>
+                                  </td>
+                                  
+                                  
+                                  <td>₹<%= cartItem.product_id.price * cartItem.quantity %></td>                                   
+                                    
+                                    <td>
+                                        <form onsubmit="confirmDelete(event, '<%= cartItem._id %>')" action="/deleteItems"
+                                            method="POST" data-product-id="<%= cartItem._id %>">
+                                            <input type="hidden" name="productOgId" value="<%= cartItem._id %>">
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class="fas fa-times"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                <tr class="bottom_button">
+                                    <td>
+                                        <a class="btn_1 genric-btn success-border radius" href="shop">UPDATE
+                                            CART</a>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <div class="cupon_text float-right">
+                                            <!-- <a class="btn_1 genric-btn success-border radius" href="#">Close
+                                                Coupon</a> -->
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <h5>Subtotal</h5>
+                                    </td>
+                                    <td>
+                                        <h5>₹<%= totalProductPrice %></h5>
+                                    </td>
+                                </tr>
+                                <tr class="shipping_area">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <h5>Shipping</h5>
+                                    </td>
+                                    <td>
+                                        <h5>Free Delivery</h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <h5 style="font-weight: bold;">Total</h5>
+                                    </td>
+                                    <td>
+                                        <h5 style="font-weight: bold;">₹<%= totalProductPrice %></h5>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="checkout_btn_inner float-right">
+                            <a class="btn_1 genric-btn success-border radius" href="shop">CONTINUE
+                                SHOPPING</a>
+                            <a class="btn_1 genric-btn success-border radius" href="/checkout">PROCEED TO
+                                CHECKOUT</a>
+                        </div>
+                    <% } else { %>
+                        <h3 style="color: red;">No items in the cart</h3>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+  <!--================End Cart Area =================-->
+
+  <!--::footer_part start::-->
+  <footer class="footer_part">
+    <div class="container">
+      <div class="row justify-content-around">
+        <div class="col-sm-6 col-lg-2">
+          <div class="single_footer_part">
+            <h4>Top Products</h4>
+            <ul class="list-unstyled">
+              <li><a href="">Managed Website</a></li>
+              <li><a href="">Manage Reputation</a></li>
+              <li><a href="">Power Tools</a></li>
+              <li><a href="">Marketing Service</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+          <div class="single_footer_part">
+            <h4>Quick Links</h4>
+            <ul class="list-unstyled">
+              <li><a href="">Jobs</a></li>
+              <li><a href="">Brand Assets</a></li>
+              <li><a href="">Investor Relations</a></li>
+              <li><a href="">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+          <div class="single_footer_part">
+            <h4>Features</h4>
+            <ul class="list-unstyled">
+              <li><a href="">Jobs</a></li>
+              <li><a href="">Brand Assets</a></li>
+              <li><a href="">Investor Relations</a></li>
+              <li><a href="">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+          <div class="single_footer_part">
+            <h4>Resources</h4>
+            <ul class="list-unstyled">
+              <li><a href="">Guides</a></li>
+              <li><a href="">Research</a></li>
+              <li><a href="">Experts</a></li>
+              <li><a href="">Agencies</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <div class="single_footer_part">
+            <h4>Newsletter</h4>
+            <p>Heaven fruitful doesn't over lesser in days. Appear creeping
+            </p>
+            <div id="mc_embed_signup">
+              <form target="_blank"
+                action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
+                method="get" class="subscribe_form relative mail_part">
+                <input type="email" name="email" id="newsletter-form-email" placeholder="Email Address"
+                  class="placeholder hide-on-focus" onfocus="this.placeholder = ''"
+                  onblur="this.placeholder = ' Email Address '">
+                <button type="submit" name="submit" id="newsletter-submit"
+                  class="email_icon newsletter-submit button-contactForm">subscribe</button>
+                <div class="mt-10 info"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="copyright_part">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="copyright_text">
+              <P><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></P>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="footer_icon social_icon">
+              <ul class="list-unstyled">
+                <li><a href="#" class="single_social_icon"><i class="fab fa-facebook-f"></i></a></li>
+                <li><a href="#" class="single_social_icon"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="#" class="single_social_icon"><i class="fas fa-globe"></i></a></li>
+                <li><a href="#" class="single_social_icon"><i class="fab fa-behance"></i></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--::footer_part end::-->
+
+  <!-- jquery plugins here-->
+  <!-- jquery -->
+  <script src="/js/jquery-1.12.1.min.js"></script>
+  <!-- popper js -->
+  <script src="/js/popper.min.js"></script>
+  <!-- bootstrap js -->
+  <script src="/js/bootstrap.min.js"></script>
+  <!-- easing js -->
+  <script src="/js/jquery.magnific-popup.js"></script>
+  <!-- swiper js -->
+  <script src="/js/swiper.min.js"></script>
+  <!-- swiper js -->
+  <script src="/js/masonry.pkgd.js"></script>
+  <!-- particles js -->
+  <script src="/js/owl.carousel.min.js"></script>
+  <script src="/js/jquery.nice-select.min.js"></script>
+  <!-- slick js -->
+  <script src="/js/slick.min.js"></script>
+  <script src="/js/jquery.counterup.min.js"></script>
+  <script src="/js/waypoints.min.js"></script>
+  <script src="/js/contact.js"></script>
+  <script src="/js/jquery.ajaxchimp.min.js"></script>
+  <script src="/js/jquery.validate.min.js"></script>
+  <script src="/js/mail-script.js"></script>
+  <script src="/js/stellar.js"></script>
+  <script src="/js/price_rangs.js"></script>
+  <!-- custom js -->
+  <script src="/js/custom.js"></script>
+
+  <script>
+    function changeQuantity(cartId, productId, count, itemId, stock) {
+        const currentQuantityElement = document.getElementById('quantity-' + itemId);
+        const currentQuantity = parseInt(currentQuantityElement.textContent);
+        const newQuantity = currentQuantity + parseInt(count);
+
+        console.log('Current Quantity:', currentQuantity);
+        console.log('New Quantity:', newQuantity);
+        console.log('Stock:', stock);
+
+        // Check if new quantity exceeds available stock
+        if (newQuantity <= parseInt(stock)) {
+            $.ajax({
+                url: '/change-product-quantity',
+                data: {
+                    cartId: cartId,
+                    productId: productId,
+                    countData: count,
+                    itemId: itemId 
+                },
+                method: 'post',
+                success: (response) => {
+                    if (response.success) {
+                        currentQuantityElement.textContent = newQuantity;
+                        $('#reloadDiv').load('/cart #reloadDiv');
+                    } else {
+                        alert('Failed to update quantity.');
+                    }
+                },
+                error: () => {
+                    alert('Error updating quantity.');
+                }
+            });
+        } else {
+          alert('Cannot exceed available stock.');
+            console.log('Cannot exceed available stock.');
+            // You can optionally handle this case without showing an alert
+            // alert('Cannot exceed available stock.');
+        }
+    }
+</script>
+
+
+
+
+  
+
+
+
+  <script>
+
+    function confirmDelete(event, cartItem) {
+      event.preventDefault();
+
+
+      Swal.fire({
+        title: 'Remove item',
+        text: 'Are you sure you want to remove this item ?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, remove it!',
+
+      }).then((result) => {
+
+        if (result.isConfirmed) {
+
+          const form = document.querySelector(`form[action="/deleteItems"][data-product-id="${cartItem}"]`);
+          form.submit();
+        }
+      });
+    }
+
+  </script>
+   
+  
+</body>
+
+</html>
