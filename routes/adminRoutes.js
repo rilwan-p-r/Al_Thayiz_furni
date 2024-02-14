@@ -61,3 +61,6 @@ adminRoutes.post("/acceptReturn/:orderId",adminController.acceptReturn)
 adminRoutes.post("/cancelReturn/:orderId",adminController.cancelReturn)
 adminRoutes.get("/coupons",isAuth.isAdminAuth,adminController.loadCoupons)
 adminRoutes.post("/coupons",adminController.addCoupon)
+adminRoutes.get("/editCoupons/:id",isAuth.isAdminAuth,adminController.loadEditCoupons)
+adminRoutes.post("/editCoupons/:id",adminController.editCoupons);
+adminRoutes.get("/deleteCoupon/:id",adminController.deleteCoupon)

@@ -58,6 +58,21 @@ schema.statics.findByCredentials = async function (email, password) {
     return user;
 };
 
+// Instance method to compare password
+schema.methods.comparePassword = async function (password) {
+    const isPasswordMatch = await bcrypt.compare(password, this.password);
+    return isPasswordMatch;
+};
+
+// Pre-save hook to hash password before saving
+schema.pre('save', async function (next) {
+    const user = this;
+    if (user.isModified('password')) {
+        user.password = await bcrypt.hash(user.password, 10);
+    }
+    next();
+});
+
 const User = mongoose.model('UsersDatas', schema);
 module.exports = User;
 // module.exports=mongoose.model("usersDatas",schema)

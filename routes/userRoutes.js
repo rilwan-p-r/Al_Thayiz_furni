@@ -75,6 +75,8 @@ userRoutes.delete("/deleteAddress/:addressId", profileController.deleteAddress)
 userRoutes.get("/editAddress/:addressId",isAuth.isUserLogin,profileController.loadEditAddress)
 userRoutes.post("/editAddress/:addressId",isAuth.isUserLogin,profileController.updateAddress)
 userRoutes.post("/apply-coupon",checkOutController.applyCouupon)
+userRoutes.get("/changePassword",isAuth.isUserLogin,profileController.loadChangePassword)
+userRoutes.post("/changePassword",profileController.changePassword)
 
 
 

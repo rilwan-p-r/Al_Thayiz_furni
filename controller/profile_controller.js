@@ -13,17 +13,25 @@ const loadUserProfile = async(req,res)=>{
         console.log(error);
     }
 }
-const loadOrderDetails = async(req,res)=>{
-    try{
-        const userId = req.session.userId
-        const user= await usersDb.findOne({_id:userId})
-        const orderDetails = await Order.find({userId:userId})
-        res.render("userSide/orderDetails",{user,orderDetails})
-    }
-    catch(error){
+const loadOrderDetails = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const user = await usersDb.findOne({ _id: userId });
+        const ordersPerPage = 6;
+        const page = parseInt(req.query.page) || 1;
+        const totalOrders = await Order.countDocuments({ userId: userId });
+        const totalPages = Math.ceil(totalOrders / ordersPerPage);
+        const orders = await Order.find({ userId: userId })
+            .skip((page - 1) * ordersPerPage)
+            .limit(ordersPerPage)
+            .sort({ orderDate: -1 });
+
+        res.render("userSide/orderDetails", { user, orders, currentPage: page, totalPages });
+    } catch (error) {
         console.log(error);
+        res.status(500).send("Internal Server Error");
     }
-}
+};
 
 const loadEditUserProfile = async(req,res)=>{
     try{
@@ -117,9 +125,7 @@ const cancelOrder = async (req, res) => {
             alternateMobile,
         };
         await usersDb.findByIdAndUpdate(userId, { $push: { addresses: newAddress } });
-        // res.json({ success: true, message: 'Address added successfully' });
-        res.redirect("/addressManage")
-        res.re
+        res.json({ success: true, message: 'Address added successfully' });
     } catch (error) {
         console.error(error.message);
         res.json({ success: false, message: 'Error adding address' });
@@ -238,6 +244,51 @@ const cancelReturn = async (req, res) => {
     }
 };
 
+const loadChangePassword = async(req,res)=>{
+    try{
+        res.render("userSide/changePassword")
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+const changePassword = async(req,res)=>{
+    try{
+        const userId = req.session.userId;
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+
+        const user = await usersDb.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Compare provided current password with the stored password
+        const isPasswordValid = await user.comparePassword(currentPassword);
+        if (!isPasswordValid) {
+            return res.status(400).json({ error: "Current password is incorrect" });
+        }
+
+        // Check if the new password meets your criteria
+        if (newPassword.length < 6) {
+            return res.status(400).json({ error: "Password must be at least 6 characters long" });
+        }
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ error: "New password and confirm password do not match" });
+        }
+
+        // Update the password
+        user.password = newPassword;
+        await user.save();
+        res.status(200).json({ message: "Password changed successfully" });
+
+    }
+    catch(error){
+        console.log(error);
+        res.status(400).json({ error: error.message });
+    }
+}
+
 module.exports = {
     loadUserProfile,
     loadOrderDetails,
@@ -252,4 +303,6 @@ module.exports = {
     updateAddress,
     returnOrder,
     cancelReturn,
+    loadChangePassword,
+    changePassword
 }

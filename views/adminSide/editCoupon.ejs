@@ -1,0 +1,106 @@
+<%- include('../layouts/header.ejs') %> 
+
+            <section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Coupons</h2>
+                        
+                    </div>
+                    <div>
+                        <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <form id="editCouponForm" method="POST" action="/admin/editCoupons/<%= coupon._id %>">
+                                    <div class="mb-4">
+                                        <label for="Coupon_title" class="form-label">Coupon Title</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Coupon_title" name="title" value="<%= coupon.title %>" />
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="Coupon_code" class="form-label">Coupon Code</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Coupon_code" name="code" value="<%= coupon.code %>" />
+                                        <div id="codeError" style="color: red; display: none;">Coupon code must have at least three characters and contain at least one number.</div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="Coupon_discount" class="form-label">Discount Amount</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Coupon_discount" name="discount" value="<%= coupon.discount %>" />
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="Coupon_description" class="form-label">Description</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Coupon_description" name="description" value="<%= coupon.description %>" />
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="Coupon_expiry" class="form-label">Expiry Date</label>
+                                        <input type="date" class="form-control" id="Coupon_expiry" name="expiryDate" value="<%= new Date(coupon.expiryDate).toISOString().split('T')[0] %>" />
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary" onclick="return validateForm()">Update Coupon</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                     </div>
+                 </div>
+                
+                <!-- card .// -->
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="statSheet/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="statSheet/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="statSheet/js/vendors/select2.min.js"></script>
+        <script src="statSheet/js/vendors/perfect-scrollbar.js"></script>
+        <script src="statSheet/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="statSheet/js/main.js?v=1.1" type="text/javascript"></script>
+
+        <script>
+            function validateForm() {
+                const titleInput = document.getElementById('Coupon_title');
+                const codeInput = document.getElementById('Coupon_code');
+                const discountInput = document.getElementById('Coupon_discount');
+                const descriptionInput = document.getElementById('Coupon_description');
+                const expiryDateInput = document.getElementById('Coupon_expiry');
+        
+                // Check if any input field is empty or contains only spaces
+                if (isEmptyOrSpaces(titleInput.value) || isEmptyOrSpaces(codeInput.value) ||
+                    isEmptyOrSpaces(discountInput.value) || isEmptyOrSpaces(descriptionInput.value) ||
+                    isEmptyOrSpaces(expiryDateInput.value)) {
+                    alert('All fields are required. Please fill them out.');
+                    return false; // Prevent form submission
+                }
+        
+                // Check coupon code validity
+                if (codeInput.value.length < 3 || !/\d/.test(codeInput.value)) {
+                    document.getElementById('codeError').style.display = 'block';
+                    alert('Coupon code must have at least three characters and contain at least one number.');
+                    return false; // Prevent form submission
+                }
+        
+                return true; // Allow form submission
+            }
+        
+            function isEmptyOrSpaces(value) {
+                return value === null || value.match(/^ *$/) !== null;
+            }
+        </script>
+             
+        
+    </body>
+</html>

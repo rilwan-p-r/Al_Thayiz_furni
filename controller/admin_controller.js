@@ -568,7 +568,58 @@ const deleteImage = async (req, res) => {
         return code.length >= 3 && /\d/.test(code);
     }
     
+    const loadEditCoupons = async (req, res) => {
+        try {
+            const couponId = req.params.id;
+            const coupon = await Coupon.findOne({ _id: couponId });
+            if (coupon) {
+                res.render('adminSide/editCoupon', { coupon });
+            } else {
+                res.status(404).send('Coupon not found');
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).send('Internal Server Error');
+        }
+    }
 
+    const   editCoupons = async(req,res)=>{
+        try{
+            const couponId = req.params.id;
+        const { title, code, discount, description, expiryDate } = req.body;
+         const updatedCoupon = await Coupon.findByIdAndUpdate(
+            couponId,
+            { title, code, discount, description, expiryDate },
+            { new: true }
+        );
+
+        if (updatedCoupon) {
+            res.redirect('/admin/coupons')
+        } else {
+            res.status(404).send('Coupon not found');
+        }
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
+    const deleteCoupon  = async(req,res)=>{
+        try{
+            const deletedCoupon = await Coupon.findByIdAndDelete(req.params.id);
+        if (!deletedCoupon) {
+            return res.status(404).json({ message: 'Coupon not found' });
+        }
+        res.redirect("/admin/coupons")
+        console.log("coupons has deleted successfully");
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
+
+    
     
     module.exports={loadAdmin,
         loadLogIn,
@@ -595,5 +646,8 @@ const deleteImage = async (req, res) => {
         acceptReturn,
         cancelReturn,
         loadCoupons,
-        addCoupon
+        addCoupon,
+        loadEditCoupons,
+        editCoupons,
+        deleteCoupon
     }

@@ -64,7 +64,7 @@
                                                     <td><%= new Date(coupon.expiryDate).toISOString().split('T')[0] %></td>
                                                     <td><%= coupon.status %></td>
                                                     <td>
-                                                        <a href="/admin/editCoupon/<%= coupon._id %>" style="color: green;">Edit</a>
+                                                        <a href="/admin/editCoupons/<%= coupon._id %>" style="color: green;">Edit</a>
                                                         <a href="/admin/deleteCoupon/<%= coupon._id %>" style="color: red;" onclick="return confirm('Are you sure you want to delete this coupon?')">Delete</a>
                                                     </td>
                                                     
@@ -110,24 +110,35 @@
             document.getElementById('createCouponForm').addEventListener('submit', async (event) => {
                 event.preventDefault();
         
+                const titleInput = document.getElementById('Coupon_title').value;
                 const codeInput = document.getElementById('Coupon_code').value;
-                const codeError = document.getElementById('codeError');
+                const discountInput = document.getElementById('Coupon_discount').value;
+                const descriptionInput = document.getElementById('Coupon_description').value;
+                const expiryDateInput = document.getElementById('Coupon_expiry').value;
         
-                // Validate coupon code
+                // Validate all fields
+                if (!isValidInput(titleInput) || !isValidInput(codeInput) ||
+                    !isValidInput(discountInput) || !isValidInput(descriptionInput) ||
+                    !isValidInput(expiryDateInput)) {
+                    alert('All fields are required. Please fill them out.');
+                    return;
+                }
                 const isValidCode = isValidCouponCode(codeInput);
                 if (!isValidCode) {
-                    // Show error message
+                    const codeError = document.getElementById('codeError');
                     codeError.style.display = 'block';
                     return;
                 }
-        
                 event.target.submit();
             });
-        
-            //validate coupon code
+    
             function isValidCouponCode(code) {
                 return code.length >= 3 && /\d/.test(code);
             }
+            function isValidInput(input) {
+                return input.trim() !== ''
+            }
         </script>
+        
     </body>
 </html>
