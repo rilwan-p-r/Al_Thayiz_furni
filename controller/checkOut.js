@@ -96,11 +96,14 @@ console.log("ffffffffffffffffffffffffffffffff");
     }
     // Parse totalAmount as a number
     const totalAmount = parseFloat(req.body.totalAmount.replace('₹', ''));
+    const discountAmount = parseFloat(req.body.discountAmount.replace('₹', ''));
+
 
     const newOrder = {
       userId: userId,
       products: [],
       totalAmount: totalAmount || 0,
+      discountAmount: discountAmount || 0,
       paymentMethod: payMethod || "",
       shippingAddress: selectedAddressObject,
     

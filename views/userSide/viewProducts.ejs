@@ -1,23 +1,5 @@
 <%-include("./header.ejs")%>
 
-  <!-- Header part end-->
-
-  <!--================Home Banner Area =================-->
-  <!-- breadcrumb start-->
-  <section class="breadcrumb breadcrumb_bg">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="breadcrumb_iner">
-            <div class="breadcrumb_iner_item">
-              <h2>Ordered Products</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- breadcrumb start-->
 
   <!--================ confirmation part start =================-->
   <section class="confirmation_part padding_top">
@@ -39,31 +21,58 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% if (orderDetails && orderDetails.products && Array.isArray(orderDetails.products)) { %>
-                            <% for (const product of orderDetails.products) { %>
-                                <tr>
-                                    <td>
-                                        <% if (product.productImages && product.productImages.length > 0) { %>
-                                            <br>
-                                            <img src="/uploads/resized/<%= product.productImages[0] %>" alt="Product Image" class="img-thumbnail" style="width: 100px; height: 100px;">
-                                        <% } %> <br><span><%= product.productName %></span>
-                                    </td>
-                                    <td>x<%= product.quantity %></td>
-                                    <td>$<%= product.price %></td>
-                                    <td><%= product.quantity * product.price %></td>
-                                   
-                                    
-                                </tr>
-                            <% } %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="4">No products found</td>
-                            </tr>
-                        <% } %>
+                        <% let orderTotal = 0; %>
+                <% if (orderDetails && orderDetails.products && Array.isArray(orderDetails.products)) { %>
+                    <% for (const product of orderDetails.products) { %>
+                        <tr>
+                            <td>
+                                <% if (product.productImages && product.productImages.length > 0) { %>
+                                    <br>
+                                    <img src="/uploads/resized/<%= product.productImages[0] %>" alt="Product Image" class="img-thumbnail" style="width: 100px; height: 100px;">
+                                <% } %> <br><span><%= product.productName %></span>
+                            </td>
+                            <td>x<%= product.quantity %></td>
+                            <td>$<%= product.price %></td>
+                            <% const total = product.quantity * product.price; %>
+                            <td>$<%= total %></td>
+                            <% orderTotal += total; %>
+                        </tr>
+                    <% } %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="4">No products found</td>
+                    </tr>
+                <% } %>
                     </tbody>
                 </table>
             </div>
         </div>
+        <div class="col-lg-4">
+          <div class="order_box">
+            <h2>Your Order Summary</h2>
+        
+            <ul class="list list_2">
+              <li>
+                <a>SUBTOTAL
+                  <span style="margin-left: 80px;"><%=orderTotal%></span>
+                  <input type="hidden" id="totalAmount" value="100">
+                </a>
+              </li>
+              <li>
+                <a>COUPON AMOUNT
+                  <span id="couponDiscount" style="margin-left: 35px;"><%= orderDetails ? orderDetails.discountAmount : 'N/A' %></span>
+                </a>
+              </li>
+              <br>
+              <li>
+                <a>Total
+                  <span id="totals" style="margin-left: 80px;"><%=orderDetails.totalAmount%></span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
         
        
     </div>
@@ -198,14 +207,6 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
    
 </body>
-
-</html>
-
-</html>
-
-</html>
-
-</html>
 
 </html>
 

@@ -1,9 +1,9 @@
 <%-include("./header.ejs")%>
   <!-- Header part end-->
-
+<br>
   <!--================Home Banner Area =================-->
   <!-- breadcrumb start-->
-  <section class="breadcrumb breadcrumb_bg">
+  <!-- <section class="breadcrumb breadcrumb_bg">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -14,9 +14,10 @@
             </div>
           </div>
         </div>
+        
       </div>
     </div>
-  </section>
+  </section> -->
   <!-- breadcrumb start-->
 
   <!--================Checkout Area =================-->
@@ -408,6 +409,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
     const addressId = addressRadio ? addressRadio.value : null;
     const totalAmount = document.getElementById('totals').textContent; // Corrected to use textContent
+    const discountAmount = document.getElementById('couponDiscount').textContent;
 
     console.log('total amount ', totalAmount);
 
@@ -416,7 +418,8 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         data: {
             selectedAddress: addressId,
             totalAmount: totalAmount,
-            paymentMethod: paymentMethodRadio.value
+            paymentMethod: paymentMethodRadio.value,
+            discountAmount: discountAmount
         },
         url: "/orderConfirmation",
         success: (response) => {
@@ -581,7 +584,7 @@ console.log('verify payment called');
       const discount = response.discount;
 
       // Update coupon discount display
-document.getElementById('couponDiscount').textContent = '- ₹' + response.discount;
+document.getElementById('couponDiscount').textContent = response.discount;
 
 // Update total amount after discount
 const overallSubtotal = parseFloat(document.getElementById('totalAmount').value);

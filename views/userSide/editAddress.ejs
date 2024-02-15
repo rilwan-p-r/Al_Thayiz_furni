@@ -1,27 +1,26 @@
 <%- include("./profileHeader.ejs") %>
   <!-- Header part end-->
-
-  <div class="container light-style flex-grow-1 container-p-y">
-    <h4 class="font-weight-bold py-3 mb-4 " style="margin-top: 110px;">
-        MY PROFILE
-    </h4>
-    <div class="card overflow-hidden">
-        <div class="row no-gutters row-bordered row-border-light">
-            <div class="col-md-3 pt-0">
-                <div class="list-group list-group-flush account-settings-links">
-                    <a class="list-group-item list-group-item-action" href="/userProfile">PROFILE</a>
-                    <a class="list-group-item list-group-item-action" href="/editUserProfile">EDIT PROFILE</a>
-                    <a class="list-group-item list-group-item-action" href="/changePassword">CHANGE PASSWORD</a>
-                    <a class="list-group-item list-group-item-action" href="/orderDetails">ORDER</a>
-                    <a class="list-group-item list-group-item-action active" href="/addressManage">MANAGE ADDRESS</a>
-                    <a class="list-group-item list-group-item-action" href="#"></a>
-                    <a class="list-group-item list-group-item-action" href="#"></a>
-                </div>
-            </div>   
+<br>
+  <div class="container horizontal-profile-container">
+    <h4 class="profile-heading">MY PROFILE</h4>
+    <div class="card border border-light rounded shadow-sm">
+        <div class="row row-bordered d-flex align-items-center">
+            <div class="col-md-12 d-flex justify-content-around py-3 px-4">
+                <a class="profile-link px-3 py-2 rounded" href="/userProfile">PROFILE</a>
+                <a class="profile-link px-3 py-2 rounded" href="/orderDetails">ORDER</a>
+                <a class="profile-link px-3 py-2 rounded" href="/editUserProfile">EDIT PROFILE</a>
+                <a class="profile-link px-3 py-2 rounded" href="/changePassword">CHANGE PASSWORD</a>
+                <a class="profile-link px-3 py-2 rounded active" href="/addressManage">MANAGE ADDRESS</a>
+                <a class="profile-link px-3 py-2 rounded" href="/wallet">Wallet</a>
+            </div>
+        </div>
+    </div>
+ </div> 
 
 
   <div class="custom-form">
     <form action="/editAddress/<%= address._id %>" method="post">
+        <h3>Edit Address</h3>
         <div class="mt-30">
             <input type="text" name="name" placeholder="Name" value="<%= address.name %>" required class="single-input-primary">
         </div>

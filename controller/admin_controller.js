@@ -3,6 +3,7 @@
     const Product = require("../model/product")
     const Order = require("../model/ordersList")
     const Coupon = require("../model/coupon")
+    const Wallet = require("../model/wallet")
     const sharp = require("sharp")
     const path=  require('path')
       // loadAdminLogIn-------
@@ -476,7 +477,6 @@ const deleteImage = async (req, res) => {
         try {
             const orderId = req.params.orderId;
             const order = await Order.findById(orderId);
-    
             if (!order) {
                 return res.status(404).json({ message: 'Order not found' });
             }
@@ -484,7 +484,30 @@ const deleteImage = async (req, res) => {
             if (order.status === 'Pending') {
                 order.status = 'Returned';
                 await order.save();
-                
+                let wallet = await Wallet.findOne({ user: order. userId });
+                if (!wallet) {
+                    wallet = new Wallet({
+                        user: order.user,
+                        balance: order.totalAmount,
+                        transactions: [{
+                            orderId: order._id,
+                            type: 'credit',
+                            amount: order.totalAmount,
+                            date: new Date()
+                        }]
+                    });
+                } else {
+                    wallet.balance += order.totalAmount;
+                    wallet.transactions.push({
+                        orderId: order._id,
+                        type: 'credit',
+                        amount: order.totalAmount,
+                        date: new Date()
+                    });
+                }
+        
+                await wallet.save();
+    
                 return res.status(200).json({ message: 'Return request accepted successfully' });
             } else {
                 return res.status(400).json({ message: 'Invalid operation' });
@@ -493,7 +516,7 @@ const deleteImage = async (req, res) => {
             console.log(error);
             return res.status(500).json({ message: 'Internal server error' });
         }
-    }
+    };
 
     const cancelReturn = async (req, res) => {
         try {

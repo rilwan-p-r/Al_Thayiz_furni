@@ -37,6 +37,10 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    discountAmount: {
+        type: Number,
+        default: 0,
+    },
     shippingAddress: {
         type: {
             name: String,

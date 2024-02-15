@@ -1,130 +1,109 @@
 <%- include("./profileHeader.ejs") %>
-
-<div class="container light-style flex-grow-1 container-p-y">
-    <h4 class="font-weight-bold py-3 mb-4 " style="margin-top: 110px;">
-        MY PROFILE
-    </h4>
-    <div class="card overflow-hidden">
-        <div class="row no-gutters row-bordered row-border-light">
-            <div class="col-md-3 pt-0">
-                <div class="list-group list-group-flush account-settings-links">
-                    <a class="list-group-item list-group-item-action" href="/userProfile">PROFILE</a>
-                    <a class="list-group-item list-group-item-action" href="/editUserProfile">EDIT PROFILE</a>
-                    <a class="list-group-item list-group-item-action" href="/changePassword">CHANGE PASSWORD</a>
-                    <a class="list-group-item list-group-item-action" href="/orderDetails">ORDER</a>
-                    <a class="list-group-item list-group-item-action active" href="/addressManage">MANAGE ADDRESS</a>
-                    <a class="list-group-item list-group-item-action" href="#"></a>
-                    <a class="list-group-item list-group-item-action" href="#"></a>
-                </div>
+<br>
+<input type="hidden" id="userId" value="<%= user._id %>">
+<div class="container horizontal-profile-container">
+    <h4 class="profile-heading">MY PROFILE</h4>
+    <div class="card border border-light rounded shadow-sm">
+        <div class="row row-bordered d-flex align-items-center">
+            <div class="col-md-12 d-flex justify-content-around py-3 px-4">
+                <a class="profile-link px-3 py-2 rounded" href="/userProfile">PROFILE</a>
+                <a class="profile-link px-3 py-2 rounded" href="/orderDetails">ORDER</a>
+                <a class="profile-link px-3 py-2 rounded" href="/editUserProfile">EDIT PROFILE</a>
+                <a class="profile-link px-3 py-2 rounded" href="/changePassword">CHANGE PASSWORD</a>
+                <a class="profile-link px-3 py-2 rounded active" href="/addressManage">MANAGE ADDRESS</a>
+                <a class="profile-link px-3 py-2 rounded" href="/wallet">Wallet</a>
             </div>
+        </div>
+    </div>
 
-            <input type="hidden" id="userId" value="<%= user._id %>">
+   <style>
+    .address-item {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-right: 10px; /* Adjust margin between boxes */
+        margin-bottom: 10px; /* Adjust margin between boxes */
+        width: calc(50% - 20px); /* Set width to occupy 50% of the container and adjust for padding */
+        max-width: 300px; /* Set maximum width */
+        cursor: pointer;
+    }
+</style>
 
-            <div class="col-md-9 pt-0">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h5 class="font-weight-bold">ADD NEW ADDRESS</h5>
-                                        <button type="button" class="btn btn-sm btn-primary" onclick="toggleFormVisibility()">Toggle Form</button>
-                                    </div>
-                                    <form id="newAddressForm" method="post" style="display: none;" class="border p-4">
-                                        <h3 class="mt-10" style="font-size: medium;">ADD A NEW ADDRESS</h3>
-                                        <!-- Your form for adding a new address goes here -->
-                                        <div class="mt-30">
-                                            <input type="text" name="name" placeholder="Name" onfocus="this.placeholder = 'Name'"
-                                                onblur="this.placeholder = 'Name'" required class="single-input-primary">
-                                        </div>
-                                  
-                                        <div class="mt-10">
-                                            <input type="text" name="mobile" placeholder="10-digit Mobile Number"
-                                                onfocus="this.placeholder = '10-digit Mobile Number'"
-                                                onblur="this.placeholder = '10-digit Mobile Number'" required
-                                                class="single-input-primary">
-                                        </div>
-                                  
-                                        <div class="mt-10">
-                                            <input type="text" name="pincode" placeholder="Pincode"
-                                                onfocus="this.placeholder = 'Pincode'" onblur="this.placeholder = 'Pincode'"
-                                                required class="single-input-primary">
-                                        </div>
-                                  
-                                        <div class="mt-10">
-                                            <input type="text" name="address" placeholder="Address"
-                                                onfocus="this.placeholder = 'Address'" onblur="this.placeholder = 'Address'"
-                                                required class="single-input-primary">
-                                        </div>
-                                  
-                                        <div class="mt-10">
-                                            <input type="text" name="city" placeholder="City/District/Town"
-                                                onfocus="this.placeholder = 'City/District/Town'"
-                                                onblur="this.placeholder = 'City/District/Town'" required
-                                                class="single-input-primary">
-                                        </div>
-                                  
-                                        <div class="mt-10">
-                                            <input type="text" name="state" placeholder="State" onfocus="this.placeholder = 'State'"
-                                                onblur="this.placeholder = 'State'" required class="single-input-primary">
-                                        </div>
-                                  
-                                  
-                                        <div class="mt-10">
-                                            <input type="text" name="landmark" placeholder="Landmark (optional)"
-                                                onfocus="this.placeholder = 'Landmark (optional)'"
-                                                onblur="this.placeholder = 'Landmark (optional)'" required
-                                                class="single-input-primary">
-                                        </div>
-                                  
-                                        <div class="mt-10">
-                                            <input type="text" name="alternateMobile" placeholder="Alternate Phone (optional)"
-                                                onfocus="this.placeholder = 'Alternate Phone (optional)'"
-                                                onblur="this.placeholder = 'Alternate Phone (optional)'" required
-                                                class="single-input-primary">
-                                        </div>
-                                        <div class="mt-30"></div>
-                                        <button type="submit" class="genric-btn primary-border">SAVE THE ADDRESS</button>
-                                  
-                                    </form>
-                                </div>
-                            </div>
+    <div class="row justify-content-center mt-4">
+        <!-- Existing Addresses -->
+        <div class="col-md-6">
+            <% if (user && user.addresses && user.addresses.length > 0) { %>
+                <div class="existing-addresses-container d-flex flex-wrap">
+                    <% user.addresses.forEach((address, index) => { %>
+                        <div class="address-item mr-3 mb-3">
+                            <input class="form-check-input" type="radio" name="selectedAddress" id="address_<%= address._id %>" value="<%= address._id %>" required>
+                            <strong><%= address.name %></strong><br>
+                            <%= address.mobile %>,<br>
+                            <%= address.address %>,<br>
+                            <%= address.city %>,<br>
+                            <%= address.state %> - <%= address.pincode %>,<br>
+                            <%= address.landmark %>,<br>
+                            <%= address.alternateMobile %><br><br>
+                            <a href="/editAddress/<%= address._id %>" class="btn btn-sm btn-primary mr-2 edit-address-btn">Edit</a>
+                            <button class="btn btn-sm btn-danger delete-address-btn" data-address-id="<%= address._id %>">Delete</button>
                         </div>
-
-                        <% if (user && user.addresses && user.addresses.length > 0) { %>
-                            <% user.addresses.forEach((address, index) => { %>
-                                <div class="col-lg-3">
-                                    <div class="address-item">
-                                        <input class="form-check-input" type="radio" name="selectedAddress" id="address_<%= address._id %>" value="<%= address._id %>" required>
-                                        <!-- Display existing address details -->
-                                        <strong><%= address.name %></strong><br>
-                                        <%= address.mobile %>,<br>
-                                        <%= address.address %>,<br>
-                                        <%= address.city %>,<br>
-                                        <%= address.state %> - <%= address.pincode %>,<br>
-                                        <%= address.landmark %>,<br>
-                                        <%= address.alternateMobile %><br><br>
-                                        <!-- Edit link -->
-                                        <a href="/editAddress/<%= address._id %>" class="btn btn-sm btn-primary mr-2 edit-address-btn">Edit</a>
-                                        <!-- Delete button -->
-                                        <button class="btn btn-sm btn-danger delete-address-btn" data-address-id="<%= address._id %>">Delete</button>
-                                    </div>
-                                </div>
-                                <% if ((index + 1) % 4 === 0) { %>
-                                    </div><div class="row">
-                                <% } %>
-                            <% }); %>
-                        <% } else { %>
-                            <div class="col-lg-12">
-                                <p>No saved addresses. Please add an address in your profile.</p>
-                            </div>
+                        <% if ((index + 1) % 2 === 0) { %>
+                            <div class="w-100"></div>
                         <% } %>
-                    </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="col-lg-12">
+                    <p>No saved addresses. Please add an address in your profile.</p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- New Address Form -->
+        <div class="col-md-6">
+            <div class="card border border-light rounded shadow-sm">
+                <div class="card-body">
+                    <h3>Create New Address</h3>
+                    <form id="newAddressForm" method="post" class="border p-4">
+                        <div class="form-group">
+                            <input type="text" name="name" placeholder="Name" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="mobile" placeholder="10-digit Mobile Number" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="pincode" placeholder="Pincode" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="address" placeholder="Address" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="city" placeholder="City/District/Town" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="state" placeholder="State" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="landmark" placeholder="Landmark (optional)" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="alternateMobile" placeholder="Alternate Phone (optional)" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">SAVE THE ADDRESS</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+
+
+        
 
 
 
@@ -160,71 +139,74 @@
   <script src="/js/price_rangs.js"></script>
   <!-- custom js -->
   <script src="/js/custom.js"></script>
+
   <script>
-    function toggleFormVisibility() {
-        let form = document.getElementById("newAddressForm");
-        form.style.display = form.style.display === "none" ? "block" : "none";
-    }
-  
-  
     $(document).ready(function() {
-    $("#newAddressForm").submit(function(event) {
-        event.preventDefault(); // Prevent default form submission
+        $("#newAddressForm").submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
 
-        // Use AJAX to send the form data to the server
-        $.ajax({
-            type: "POST",
-            url: "/addressManage", // Adjust the URL based on your server configuration
-            data: $(this).serialize(),
-            dataType: "json",
-            success: function(response) {
-                console.log('Response:', response);
+            // Use AJAX to send the form data to the server
+            $.ajax({
+                type: "POST",
+                url: "/addressManage", // Adjust the URL based on your server configuration
+                data: $(this).serialize(),
+                dataType: "json",
+                success: function(response) {
+                    console.log('Response:', response);
 
-                if (response.success) {
-                    $("#message").text(response.message);
-                    window.location.reload();
-                } else {
-                    console.error(response.message);
+                    if (response.success) {
+                        $("#message").text(response.message);
+                        window.location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(error) {
+                    console.error("Error:", error);
                 }
-            },
-            error: function(error) {
-                console.error("Error:", error);
+            });
+        });
+    });
+</script>
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+    const editButtons = document.querySelectorAll('.edit-address-btn');
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            // Check if a radio button is selected
+            const selectedRadio = document.querySelector('input[name="selectedAddress"]:checked');
+            if (!selectedRadio) {
+                alert('Please select an address to edit.');
+                event.preventDefault();
+                return false;
+            }
+
+            const addressId = selectedRadio.value; // Retrieve the address ID from the selected radio button
+
+            // Ask for confirmation before redirecting
+            if (confirm('Are you sure you want to edit this address?')) {
+                // Redirect to the edit page with the selected address ID
+                window.location.href = `/editAddress/${addressId}`;
+            } else {
+                event.preventDefault();
+            }
+        });
+    });
+
+    // Add functionality to select radio button when clicking anywhere within address box
+    const addressItems = document.querySelectorAll('.address-item');
+
+    addressItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const radioBtn = item.querySelector('input[type="radio"][name="selectedAddress"]');
+            if (radioBtn) {
+                radioBtn.click(); // Trigger click event on associated radio button
             }
         });
     });
 });
 
-  
-  </script> 
-
-<script>
-    // Function to handle click event on edit buttons
-    document.addEventListener('DOMContentLoaded', function() {
-        const editButtons = document.querySelectorAll('.edit-address-btn');
-
-        editButtons.forEach(button => {
-            button.addEventListener('click', function(event) {
-                // Check if a radio button is selected
-                const selectedRadio = document.querySelector('input[name="selectedAddress"]:checked');
-                if (!selectedRadio) {
-                    alert('Please select an address to edit.');
-                    event.preventDefault()
-                    return false;
-                }
-
-                const addressId = selectedRadio.value; // Retrieve the address ID from the selected radio button
-
-                // Ask for confirmation before redirecting
-                if (confirm('Are you sure you want to edit this address?')) {
-                    // Redirect to the edit page with the selected address ID
-                    window.location.href = `/editAddress/${addressId}`;
-                }
-                else{
-                    event.preventDefault()
-                }
-            });
-        });
-    });
 
     // Function to handle click event on delete buttons
     document.addEventListener('DOMContentLoaded', function() {

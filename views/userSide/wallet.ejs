@@ -1,0 +1,81 @@
+<%- include("./profileHeader.ejs") %>
+<br>
+<div class="container horizontal-profile-container">
+    <h4 class="profile-heading">MY PROFILE</h4>
+    <div class="card border border-light rounded shadow-sm">
+        <div class="row row-bordered d-flex align-items-center">
+            <div class="col-md-12 d-flex justify-content-around py-3 px-4">
+                <a class="profile-link px-3 py-2 rounded" href="/userProfile">PROFILE</a>
+                <a class="profile-link px-3 py-2 rounded" href="/orderDetails">ORDER</a>
+                <a class="profile-link px-3 py-2 rounded" href="/editUserProfile">EDIT PROFILE</a>
+                <a class="profile-link px-3 py-2 rounded" href="/changePassword">CHANGE PASSWORD</a>
+                <a class="profile-link px-3 py-2 rounded" href="/addressManage">MANAGE ADDRESS</a>
+                <a class="profile-link px-3 py-2 rounded active" href="/wallet">Wallet</a>
+            </div>
+        </div>
+    </div>
+<br>
+    <div class="text-center">
+        <h4 style="color: green;">Current Balance: <%= wallet ? wallet.balance : 'N/A' %></h4>
+        <button type="button" class="btn btn-primary">Add Cash</button>
+    </div>
+    <br>
+ <div class="table-responsive">
+    <table class="table table-hover text-center">
+        <thead>
+            <tr>
+                
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Payment ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% wallet.transactions.forEach(transaction => { %>
+                <tr>
+                    <td class="font-weight-bold"><%= transaction.date %></td>
+                    <td class="font-weight-bold <%= transaction.type === 'credit' ? 'text-success' : 'text-danger' %>"><%= transaction.type %></td>
+                    <td class="font-weight-bold"><%= transaction.amount %></td>
+                    <td class="font-weight-bold"><%= transaction.orderId %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+</div>
+ <!-- jquery -->
+ <script src="/js/jquery-1.12.1.min.js"></script>
+ <!-- popper js -->
+ <script src="/js/popper.min.js"></script>
+ <!-- bootstrap js -->
+ <script src="/js/bootstrap.min.js"></script>
+ <!-- easing js -->
+ <script src="/js/jquery.magnific-popup.js"></script>
+ <!-- swiper js -->
+ <script src="/js/swiper.min.js"></script>
+ <!-- swiper js -->
+ <script src="/js/masonry.pkgd.js"></script>
+ <!-- particles js -->
+ <script src="/js/owl.carousel.min.js"></script>
+ <script src="/js/jquery.nice-select.min.js"></script>
+ <!-- slick js -->
+ <script src="/js/slick.min.js"></script>
+ <script src="/js/jquery.counterup.min.js"></script>
+ <script src="/js/waypoints.min.js"></script>
+ <script src="/js/contact.js"></script>
+ <script src="/js/jquery.ajaxchimp.min.js"></script>
+ <script src="/js/jquery.form.js"></script>
+ <script src="/js/jquery.validate.min.js"></script>
+ <script src="/js/mail-script.js"></script>
+ <script src="/js/stellar.js"></script>
+ <script src="/js/price_rangs.js"></script>
+ <!-- custom js -->
+ <script src="/js/custom.js"></script>
+
+  
+</body>
+
+</html>
+
+</html>

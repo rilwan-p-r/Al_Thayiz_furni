@@ -77,6 +77,7 @@ userRoutes.post("/editAddress/:addressId",isAuth.isUserLogin,profileController.u
 userRoutes.post("/apply-coupon",checkOutController.applyCouupon)
 userRoutes.get("/changePassword",isAuth.isUserLogin,profileController.loadChangePassword)
 userRoutes.post("/changePassword",profileController.changePassword)
+userRoutes.get("/wallet",isAuth.isUserLogin,profileController.loadWallet)
 
 
 

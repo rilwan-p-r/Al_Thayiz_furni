@@ -1,7 +1,7 @@
 const usersDb=require("../model/users")
 const Order = require("../model/ordersList")
 const Product = require("../model/product")
-
+const Wallet = require("../model/wallet")
 
 const loadUserProfile = async(req,res)=>{
     try{
@@ -17,7 +17,7 @@ const loadOrderDetails = async (req, res) => {
     try {
         const userId = req.session.userId;
         const user = await usersDb.findOne({ _id: userId });
-        const ordersPerPage = 6;
+        const ordersPerPage = 3;
         const page = parseInt(req.query.page) || 1;
         const totalOrders = await Order.countDocuments({ userId: userId });
         const totalPages = Math.ceil(totalOrders / ordersPerPage);
@@ -114,23 +114,42 @@ const cancelOrder = async (req, res) => {
     try {
         const { name, mobile, pincode, address, city, state, landmark, alternateMobile } = req.body;
         const userId = req.session.userId;
+
+        // Validation
+        if (!name || !mobile || !pincode || !address || !city || !state || !landmark || !alternateMobile) {
+            throw new Error("All fields are required");
+        }
+        const trimmedFields = { name: name.trim(), mobile: mobile.trim(), pincode: pincode.trim(),
+             address: address.trim(), city: city.trim(), state: state.trim(), landmark: landmark.trim(),
+             alternateMobile: alternateMobile.trim() };
+
+        // Validation for minimum length
+        if (Object.values(trimmedFields).some(field => field.length < 2)) {
+            throw new Error("All fields must have at least 2 characters");
+        }
+        if (trimmedFields.mobile === trimmedFields.alternateMobile) {
+            throw new Error("Mobile and alternate mobile cannot be the same");
+        }
+
         const newAddress = {
-            name,
-            mobile,
-            pincode,
-            address,
-            city,
-            state,
-            landmark,
-            alternateMobile,
+            name: trimmedFields.name,
+            mobile: trimmedFields.mobile,
+            pincode: trimmedFields.pincode,
+            address: trimmedFields.address,
+            city: trimmedFields.city,
+            state: trimmedFields.state,
+            landmark: trimmedFields.landmark,
+            alternateMobile: trimmedFields.alternateMobile,
         };
+
         await usersDb.findByIdAndUpdate(userId, { $push: { addresses: newAddress } });
         res.json({ success: true, message: 'Address added successfully' });
     } catch (error) {
         console.error(error.message);
-        res.json({ success: false, message: 'Error adding address' });
+        res.json({ success: false, message: error.message });
     }
 };
+
 
 const deleteAddress = async(req,res)=>{
     try {
@@ -289,6 +308,17 @@ const changePassword = async(req,res)=>{
     }
 }
 
+const loadWallet = async(req,res)=>{
+    try{
+        userId = req.session.userId
+        const wallet = await Wallet.findOne({ user: userId })
+        res.render("userSide/wallet", { wallet });
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
 module.exports = {
     loadUserProfile,
     loadOrderDetails,
@@ -304,5 +334,6 @@ module.exports = {
     returnOrder,
     cancelReturn,
     loadChangePassword,
-    changePassword
+    changePassword,
+    loadWallet
 }
