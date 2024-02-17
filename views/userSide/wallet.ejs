@@ -24,7 +24,6 @@
     <table class="table table-hover text-center">
         <thead>
             <tr>
-                
                 <th scope="col">Date</th>
                 <th scope="col">Type</th>
                 <th scope="col">Amount</th>
@@ -32,16 +31,33 @@
             </tr>
         </thead>
         <tbody>
-            <% wallet.transactions.forEach(transaction => { %>
-                <tr>
-                    <td class="font-weight-bold"><%= transaction.date %></td>
-                    <td class="font-weight-bold <%= transaction.type === 'credit' ? 'text-success' : 'text-danger' %>"><%= transaction.type %></td>
-                    <td class="font-weight-bold"><%= transaction.amount %></td>
-                    <td class="font-weight-bold"><%= transaction.orderId %></td>
-                </tr>
-            <% }); %>
-        </tbody>
+            <% 
+            if (wallet && wallet.transactions && wallet.transactions.length > 0) {
+                // Sort transactions by date in descending order (latest transaction first)
+                wallet.transactions.sort((a, b) => {
+                    // Assuming date format is MM/DD/YYYY
+                    const dateA = new Date(a.date.split('/').reverse().join('-'));
+                    const dateB = new Date(b.date.split('/').reverse().join('-'));
+                    return dateB - dateA;
+                }).forEach(transaction => { 
+        %>
+            <tr>
+                <td class="font-weight-bold"><%= transaction.date %></td>
+                <td class="font-weight-bold <%= transaction.type === 'credit' ? 'text-success' : 'text-danger' %>"><%= transaction.type %></td>
+                <td class="font-weight-bold"><%= transaction.amount %></td>
+                <td class="font-weight-bold"><%= transaction.orderId %></td>
+            </tr>
+        <% 
+                }); 
+            } else { 
+        %>
+            <tr>
+                <td colspan="4">No transactions found</td>
+            </tr>
+        <% } %>
+    </tbody>
     </table>
+    
 </div>
 </div>
  <!-- jquery -->

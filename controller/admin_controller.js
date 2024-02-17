@@ -407,20 +407,28 @@ const deleteImage = async (req, res) => {
         }
     }
 
-    const loadOrdersList = async(req,res)=>{
-        try{
-            if(req.session.isLogged){
+    const loadOrdersList = async (req, res) => {
+        try {
+            if (req.session.isLogged) {
+                const page = parseInt(req.query.page) || 1;
+                const perPage = 5;
+                const totalOrders = await Order.countDocuments();
+                const totalPages = Math.ceil(totalOrders / perPage);
                 const orderDetails = await Order.find()
-                res.render("adminSide/orderList",{orderDetails})
+                    .skip((page - 1) * perPage)
+                    .limit(perPage)
+                    .sort({ orderDate: -1 }); // Sort by order date in descending order
+    
+                res.render("adminSide/orderList", { orderDetails, totalPages, currentPage: page });
+            } else {
+                res.redirect("/admin/admin_login");
             }
-            else{
-                res.redirect("/admin/admin_login")
-            }
-        }
-        catch(error){
+        } catch (error) {
             console.log(error);
+            res.status(500).send("Internal Server Error");
         }
-    }
+    };
+    
 
     const loadEditOrderStatus = async(req,res)=>{
         try{
@@ -448,6 +456,10 @@ const deleteImage = async (req, res) => {
             const newStatus = req.body.newStatus;
             
             const updatedOrder = await Order.findOneAndUpdate( { _id: orderId },{ $set: { status: newStatus } },{ new: true });
+            if (newStatus === "Delivered" && updatedOrder.paymentStatus !== "Paid"){
+                updatedOrder.paymentStatus = "Paid";
+                await updatedOrder.save();
+            }
             console.log("favbafbvavafd:",updatedOrder);
             res.redirect("/admin/orderList");
         }
@@ -487,7 +499,7 @@ const deleteImage = async (req, res) => {
                 let wallet = await Wallet.findOne({ user: order. userId });
                 if (!wallet) {
                     wallet = new Wallet({
-                        user: order.user,
+                        user: order.userId,
                         balance: order.totalAmount,
                         transactions: [{
                             orderId: order._id,

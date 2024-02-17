@@ -1,6 +1,6 @@
 <%-include("./header.ejs")%>
   <!-- Header part end-->
-<br>
+<br><br><br>
   <!--================Home Banner Area =================-->
   <!-- breadcrumb start-->
   <!-- <section class="breadcrumb breadcrumb_bg">
@@ -25,7 +25,7 @@
     <div class="container">
 
       <div class="table-responsive">
-        <% if (cartDetails.items && cartDetails.items.length > 0) { %>
+        <% if (cartDetails && cartDetails.items && cartDetails.items.length > 0) { %>
         <table class="table">
             <thead>
                 <tr>
@@ -168,75 +168,88 @@
       <div class="row">
         <div class="col-lg-8">
           <div class="card mb-3">
-            <div class="card-body">
-              <h5 class="card-title">Select Shipping Address</h5>
-              <div class="form-check">
-                <% if (user && user.addresses && user.addresses.length > 0) { %>
-                  <% user.addresses.forEach((address) => { %>
-                    <input class="form-check-input" type="radio" name="selectedAddress" id="address_<%= address._id %>" value="<%= address._id %>" required>
-                    <label class="form-check-label" for="address_<%= address._id %>">
-                      <strong><%= address.name %></strong><br>
-                      <%= address.mobile %>,<br>
-                      <%= address.address %>,<br>
-                      <%= address.city %>,<br>
-                      <%= address.state %> - <%= address.pincode %>,<br>
-                      <%= address.landmark %>,<br>
-                      <%= address.alternateMobile %>
-                    </label>
-                    <br>
-                  <% }); %>
-                <% } else { %>
-                  <p>No saved addresses. Please add an address in your profile.</p>
-                <% } %>
+              <div class="card-body">
+                  <h5 class="card-title" style="font-weight: 1000;">Select Shipping Address</h5>
+                  <div id="addressRows">
+                      <% if (user && user.addresses && user.addresses.length > 0) { %>
+                          <% let count = 0; %>
+                          <div class="row">
+                              <% user.addresses.forEach((address) => { %>
+                                  <div class="col-lg-4">
+                                      <div class="form-check">
+                                          <input class="form-check-input" type="radio" name="selectedAddress" id="address_<%= address._id %>" value="<%= address._id %>" required>
+                                          <label class="form-check-label" for="address_<%= address._id %>">
+                                              <strong><%= address.name %></strong><br>
+                                              <%= address.mobile %>,<br>
+                                              <%= address.address %>,<br>
+                                              <%= address.city %>,<br>
+                                              <%= address.state %> - <%= address.pincode %>,<br>
+                                              <%= address.landmark %>,<br>
+                                              <%= address.alternateMobile %>
+                                          </label>
+                                      </div>
+                                  </div>
+                                  <% count++; %>
+                                  <% if (count === 3) { %>
+                                      </div><div class="row">
+                                      <% count = 0; %>
+                                  <% } %>
+                              <% }); %>
+                          </div>
+                      <% } else { %>
+                          <p>No saved addresses. Please add an address in your profile.</p>
+                      <% } %>
+                  </div>
               </div>
-            </div>
           </div>
-        </div>
+      </div>
+      
 
 
-        <div class="col-lg-4">
-          <div class="order_box">
-            <h2>Your Order</h2>
-            <ul class="list">
-              <% let overallSubtotal = 0; %>
-              <% cartDetails.items.forEach((cartItem) => { %>
+          <div class="col-lg-4">
+            <div class="order_box">
+              <h2>Your Order</h2>
+              <ul class="list">
+                <% let overallSubtotal = 0; %>
+                <% cartDetails.items.forEach((cartItem) => { %>
+                  <li>
+                    <a href="#">
+                      <%= cartItem.product_id && cartItem.product_id.name ? cartItem.product_id.name : 'Product Name Not Available' %>
+                      <span class="middle quantity">x<%= cartItem.quantity %></span>
+                      <span></span>
+                      <span class="last price">₹<%= cartItem.total_price %></span>
+                    </a>
+                    <% let itemSubtotal = cartItem.total_price; %>
+                    <% overallSubtotal += itemSubtotal; %>
+                  </li>
+                <% }); %>
+              </ul>
+      
+              <ul class="list list_2">
                 <li>
-                  <a href="#">
-                    <%= cartItem.product_id && cartItem.product_id.name ? cartItem.product_id.name : 'Product Name Not Available' %>
-                    <span class="middle quantity">x<%= cartItem.quantity %></span>
-                    <span class="last price">₹<%= cartItem.total_price %></span>
+                  <a>SUBTOTAL
+                    <span  style="margin-left: 80px;">₹<%= overallSubtotal %></span>
+                    <input type="hidden" id="totalAmount" value="<%= overallSubtotal %>">
                   </a>
-                  <% let itemSubtotal = cartItem.total_price; %>
-                  <% overallSubtotal += itemSubtotal; %>
                 </li>
-              <% }); %>
-            </ul>
-    
-            <ul class="list list_2">
-              <li>
-                <a>SUBTOTAL
-                  <span  style="margin-left: 80px;">₹<%= overallSubtotal %></span>
-                  <input type="hidden" id="totalAmount" value="<%= overallSubtotal %>">
-                </a>
+                <li>
+                  <a>COUPON AMOUNT
+                      <span id="couponDiscount" style="margin-left: 35px;"></span>
+                  </a>
               </li>
-              <li>
-                <a>COUPON AMOUNT
-                    <span id="couponDiscount" style="margin-left: 35px;"></span>
-                </a>
-            </li>
-              <li>
-                <a>DELIVERY CHARGES
-                  <span>- Free</span>
-                </a>
-              </li>
-              <br>
-              <li>
-                <a>Total
-                  <span id="totals" style="margin-left: 80px;">₹<%= overallSubtotal %></span>
-                </a>
-              </li>
-            </ul>
-    
+                <li>
+                  <a>DELIVERY CHARGES
+                    <span>- Free</span>
+                  </a>
+                </li>
+                <br>
+                <li>
+                  <a>Total
+                    <span id="totals" style="margin-left: 80px;">₹<%= overallSubtotal %></span>
+                  </a>
+                </li>
+              </ul>
+      
             <!-- payment method -->
             <br><br>
             <div class="payment_item">
@@ -249,6 +262,11 @@
               <div class="radion_btn">
                 <input type="radio" id="RAZORPAY" name="paymentMethod" value="RAZORPAY" required>
                 <label for="RAZORPAY">RAZORPAY</label>
+                <div class="check"></div>
+              </div>
+              <div class="radion_btn">
+                <input type="radio" id="Wallet" name="paymentMethod" value="Wallet" required>
+                <label for="Wallet">Wallet</label>
                 <div class="check"></div>
               </div>
             </div>
@@ -413,6 +431,13 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
     console.log('total amount ', totalAmount);
 
+    if (paymentMethodRadio.value === 'Wallet') {
+        const confirmWalletPayment = confirm("Are you sure you want to pay with your wallet?");
+        if (!confirmWalletPayment) {
+            return;
+        }
+    }
+
     $.ajax({
         type: 'POST',
         data: {
@@ -423,19 +448,24 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         },
         url: "/orderConfirmation",
         success: (response) => {
-            if (response.codSuccess === true) {
-                const param = response.params;
-                const url = '/orderPlaced/'
-                window.location.href = url
-            } else if (response.razorpayOrder) {
-                console.log('razorpayOrder', response.razorpayOrder);
-                razorpayPayment(response.razorpayOrder);
-            } else {
-                console.error("Unexpected response from the server:", response);
-            }
-        },
+    if (response.codSuccess === true) {
+        const param = response.params;
+        const url = '/orderPlaced/'
+        window.location.href = url;
+    } else if (response.walletSuccess === true) {
+        alert("Payment successful. Your order has been placed.");
+        const url = '/orderPlaced/';
+        window.location.href = url;
+    } else if (response.razorpayOrder && paymentMethodRadio.value !== 'Wallet') {
+        console.log('razorpayOrder', response.razorpayOrder);
+        razorpayPayment(response.razorpayOrder);
+    } else {
+        alert(response.error);
+    }
+},
     });
 }
+
 
 
 
@@ -488,18 +518,11 @@ console.log('verify payment called');
               success: (response) => {
                   (response.razorpaySuccess)
                   console.log('razorpay success');
-                  // const param = response.params;
                   const url = '/orderPlaced/';
                   window.location.href = url;
               }
           })
       }
-
-
-
-
-
-
 </script>
 
 <script>
@@ -507,21 +530,15 @@ console.log('verify payment called');
       let form = document.getElementById("newAddressForm");
       form.style.display = form.style.display === "none" ? "block" : "none";
   }
-
-
-  // Assuming you have a form with id="newAddressForm" and a div with id="message"
   $("#newAddressForm").submit(function (event) {
       event.preventDefault();
-
-      // Use AJAX to send the form data to the server
       $.ajax({
           type: "POST",
-          url: "/checkout", // Adjust the URL based on your server configuration
+          url: "/checkout",
           data: $(this).serialize(),
           dataType: "json",
           success: function (response) {
               console.log('Response:', response);
-              
 
               if (response.success) {
                   $("#message").text(response.message);
@@ -541,13 +558,10 @@ console.log('verify payment called');
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Toggle dropdown menu when the dropdown button is clicked
     document.getElementById('couponDropdown').addEventListener('click', function() {
       var dropdownMenu = document.querySelector('.dropdown-menu');
       dropdownMenu.classList.toggle('show');
     });
-
-    // Close dropdown menu when clicking outside
     document.addEventListener('click', function(event) {
       var dropdownMenu = document.querySelector('.dropdown-menu');
       var couponDropdown = document.getElementById('couponDropdown');
@@ -558,14 +572,11 @@ console.log('verify payment called');
   });
 
   function selectCoupon(coupon) {
-    // Update the coupon input field value
     document.getElementById('couponCode').value = coupon;
-    // Close the dropdown menu after selecting a coupon
     document.querySelector('.dropdown-menu').classList.remove('show');
   }
-
- 
 </script>
+
 <script>
   async function applyCoupon() {
   const couponCode = document.getElementById('couponCode').value;
@@ -576,16 +587,12 @@ console.log('verify payment called');
       data: {
         couponCode: couponCode
       },
-      url: '/apply-coupon', // Adjust the URL to your backend endpoint
+      url: '/apply-coupon',
     });
 
     if (response.success) {
-      // Coupon applied successfully, update UI with discount
       const discount = response.discount;
-
-      // Update coupon discount display
 document.getElementById('couponDiscount').textContent = response.discount;
-
 // Update total amount after discount
 const overallSubtotal = parseFloat(document.getElementById('totalAmount').value);
 const totalAfterDiscount = overallSubtotal - discount;
@@ -593,18 +600,13 @@ document.getElementById('totals').textContent = '₹' + totalAfterDiscount.toFix
 
 // Update hidden input field with the updated total amount
 document.getElementById('totalAmount').value = totalAfterDiscount.toFixed(2);
-
-     
-
-      // Show success message
       Swal.fire({
         title: "",
         text: "Coupon applied",
         icon: "success",
-        showConfirmButton: false, // Hide the "OK" button
+        showConfirmButton: false,
       });
     } else {
-      // Invalid coupon code, show error message
       Swal.fire({
         title: "",
         text: "Invalid coupon code",
@@ -615,14 +617,7 @@ document.getElementById('totalAmount').value = totalAfterDiscount.toFixed(2);
     console.error(error);
   }
 }
-
 </script>
-
-
-
-
-
-  
 </body>
 
 </html>

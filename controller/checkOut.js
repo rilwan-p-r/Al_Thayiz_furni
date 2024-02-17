@@ -5,6 +5,7 @@ const Product = require("../model/product")
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Coupon = require("../model/coupon")
+const Wallet = require("../model/wallet")
 
 var instance = new Razorpay({
   key_id: "rzp_test_8UFoOV8AuZ0XKu",
@@ -67,37 +68,23 @@ const postAddress = async (req, res) => {
 const orderConfirmation = async (req, res) => {
   try {
     const payMethod = req.body.paymentMethod;
-
-    console.log("Order Confirmation Process Started");
     const userId = req.session.userId;
     const user = await usersDb.findById(userId);
-
-    console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
     const selectedAddressId = req.body.selectedAddress;
-console.log("ffffffffffffffffffffffffffffffff");
-
-
-    const selectedAddressObject = user.addresses.find(
-      (address) => address._id.toString() === selectedAddressId
-    );
-
-    console.log("ppppppppppppppppppppppppppppppp");
+    const selectedAddressObject = user.addresses.find(address => address._id.toString() === selectedAddressId);
 
     if (!selectedAddressObject) {
-      console.log("Selected address not found for the user");
       return res.status(400).json({ error: "Selected address not found" });
     }
-    console.log("Selected Address:", selectedAddressObject);
+
     const cart = await Cart.findOne({ userId }).populate("items.product_id");
 
     if (!cart) {
-      console.log("Cart not found for the user");
       return res.status(400).json({ error: "Cart not found" });
     }
-    // Parse totalAmount as a number
+
     const totalAmount = parseFloat(req.body.totalAmount.replace('₹', ''));
     const discountAmount = parseFloat(req.body.discountAmount.replace('₹', ''));
-
 
     const newOrder = {
       userId: userId,
@@ -106,43 +93,21 @@ console.log("ffffffffffffffffffffffffffffffff");
       discountAmount: discountAmount || 0,
       paymentMethod: payMethod || "",
       shippingAddress: selectedAddressObject,
-    
     };
-    console.log("req.body.paymentMethod", typeof payMethod);
+
     for (const item of cart.items) {
       const product = item.product_id;
-
-      // Check if the product is available
       if (product.quantity < item.quantity) {
-        console.log(
-          `Insufficient quantity available for product: ${product.name}`
-        );
-        return res
-          .status(400)
-          .json(`{
-            error: Insufficient quantity available for product: ${product.name},
-          }`);
+        return res.status(400).json({ error: `Insufficient quantity available for product: ${product.name}` });
       }
-
-      // Update the available quantity
       const updatedProduct = await Product.findOneAndUpdate(
-        { _id: product._id, quantity: { $gte: item.quantity } }, // Ensure available quantity is sufficient
+        { _id: product._id, quantity: { $gte: item.quantity } },
         { $inc: { quantity: -item.quantity } },
         { new: true }
       );
-
       if (!updatedProduct) {
-        // If updatedProduct is null
-        console.log(
-          `Insufficient quantity available for product: ${product.name}`
-        );
-        return res
-          .status(400)
-          .json(`{
-            error: Insufficient quantity available for product: ${product.name},
-          }`);
+        return res.status(400).json({ error: `Insufficient quantity available for product: ${product.name}` });
       }
-
       newOrder.products.push({
         productId: product._id,
         productName: product.name,
@@ -152,30 +117,53 @@ console.log("ffffffffffffffffffffffffffffffff");
       });
     }
 
-    const order = await Order.create(newOrder);
+    // Check payment method
+    if (payMethod === "Wallet") {
+      const wallet = await Wallet.findOne({ user: userId });
+      if (!wallet) {
+        return res.status(400).json({ error: "Wallet not found for this user" });
+      }
+      if (wallet.balance < totalAmount) {
+        return res.status(400).json({ error: "Insufficient balance in wallet" });
+      }
+      wallet.balance -= totalAmount;
+      await wallet.save();
+      const order = await Order.create(newOrder);
 
-    // Clean up cart
+  // Create transaction history
+  const transaction = {
+    orderId: order._id, // Assign the orderId
+    type: "debit",
+    amount: totalAmount,
+    date: new Date()
+  };
+
+  wallet.transactions.push(transaction);
+
+  // Save wallet with updated transaction
+  await wallet.save();
+
+      await Cart.findOneAndDelete({ userId });
+
+      console.log("Order created:", order._id);
+      await Order.findByIdAndUpdate(order._id, { paymentStatus: "Paid" });
+      return res.status(201).json({ walletSuccess: true, order });
+    }
+
+    // For other payment methods (e.g., COD)
+    const order = await Order.create(newOrder);
     await Cart.findOneAndDelete({ userId });
 
     console.log("Order created:", order._id);
-    if (payMethod == "Cod") {
-   
-      res.status(201).json({ codSuccess: true, order });
+    if (payMethod === "Cod") {
+      return res.status(201).json({ codSuccess: true, order });
     } else {
-      // Parse totalAmount as a number and remove currency symbol if present
-       const totalAmount = parseFloat(req.body.totalAmount.replace('₹', ''));
-
-      console.log("razorpay working", order._id, "", totalAmount);
-      const razorpayOrder = await genarateRazorpay(
-      order._id,
-      totalAmount
-  );
-      // console.log("Razorpay order generated successfully", razorpayOrder);
-      res.json({ razorpayOrder });
+      const razorpayOrder = await genarateRazorpay(order._id, totalAmount);
+      return res.json({ razorpayOrder });
     }
   } catch (error) {
     console.error("Error during order confirmation:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -218,7 +206,7 @@ const verifypayment = async (req, res) => {
       console.log("payment is successful");
       const update = await Order.updateOne(
         { _id: receiptID },
-        { $set: { status: "placed", payment: "razorpay" } }
+        { $set: { paymentStatus: "Paid", payment: "razorpay" } }
       );
       console.log("status changed");
     }

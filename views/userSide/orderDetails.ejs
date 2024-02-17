@@ -26,6 +26,7 @@
                                     <th scope="col">Paymet Method</th>
                                     <th scope="col">Total</th>
                                     <th scope="col">Status</th>
+                                    <th scope="col">Payment Status</th>
                                     <th scope="col">Address</th>
                                     <th scope="col">Order Date</th>
                                     <% if (orders.some(order => order.status !== 'Returned')) { %>
@@ -46,6 +47,7 @@
                                         <td class="<%= order.status === 'Delivered' ? 'delivered-status' : (order.status === 'Out of delivery' ? 'out-of-delivery-status' : 'default-status') %>">
                                             <%= order.status %>
                                         </td>
+                                        <td><%=order.paymentStatus%></td>
                                         <td>
                                             <%= order.shippingAddress.name %><br>
                                             <%= order.shippingAddress.address %><br>
@@ -69,7 +71,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                 </div>
                     <div style="text-align: center; margin-top: 20px;">
                         <nav aria-label="Page navigation example" style="display: inline-block;">
                             <ul class="pagination">

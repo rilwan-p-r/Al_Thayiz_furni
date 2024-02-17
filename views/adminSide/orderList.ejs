@@ -42,6 +42,7 @@
                                         <th scope="col">Paymet Method</th>
                                         <th scope="col">Total</th>
                                         <th scope="col">Status</th>
+                                        <th scope="col">Payment Status</th>
                                         <th scope="col">Address</th>
                                         <th scope="col">Order Date</th>
                                         <th scope="col">View</th>
@@ -61,7 +62,7 @@
                                             <td><%= order.paymentMethod %></td>
                                             <td><%= order.totalAmount %></td>
                                             <td><%= order.status %></td>
-                                            <td>
+                                            <td><%=order.paymentStatus%></td>                                            <td>
                                                 <%= order.shippingAddress.name %><br>
                                                 <%= order.shippingAddress.address %><br>
                                                 <%= order.shippingAddress.mobile %><br>
@@ -84,7 +85,53 @@
                                 </tbody>
                             </table>
                         </div>
+                        
                     </div>
+                    <!-- Pagination -->
+<!-- Pagination -->
+<!-- Pagination -->
+<!-- Pagination -->
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <% if (currentPage > 1) { %>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+        <% } %>
+        <li class="page-item <%= currentPage === 1 ? 'active' : '' %>">
+            <a class="page-link" href="?page=1">1</a>
+        </li>
+        <% if (totalPages > 3 && currentPage > 2) { %>
+            <li class="page-item"><span class="page-link">...</span></li>
+        <% } %>
+        <% let startPage = Math.max(2, currentPage - 1); %>
+        <% let endPage = Math.min(startPage + 1, totalPages - 1); %>
+        <% for (let i = startPage; i <= endPage; i++) { %>
+            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+            </li>
+        <% } %>
+        <% if (totalPages > 3 && currentPage < totalPages - 1) { %>
+            <li class="page-item"><span class="page-link">...</span></li>
+        <% } %>
+        <li class="page-item <%= currentPage === totalPages ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= totalPages %>"><%= totalPages %></a>
+        </li>
+        <% if (currentPage < totalPages) { %>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        <% } %>
+    </ul>
+</nav>
+
+
                     <!-- card-body end// -->
                 </div>
                 <!-- card end// -->

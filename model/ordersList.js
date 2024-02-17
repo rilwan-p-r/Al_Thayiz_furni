@@ -67,6 +67,11 @@ const orderSchema = new mongoose.Schema({
         enum: ['Processing', 'Out of delivery', 'Delivered','Pending','Returned'],
         default: 'Processing',
     },
+    paymentStatus:{
+        type:String,
+        enum: ["Paid","Unpaid"],
+        default: "Unpaid",
+    },
         returnRequest: {
         type: Boolean,
         default: false
