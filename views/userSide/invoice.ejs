@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Example 1</title>
+    <link rel="stylesheet" href="/css/invoice.css">
+  </head>
+  <body>
+    <header class="clearfix">
+      <div id="logo">
+        <img src="/img/logo5.png">
+      </div>
+      <h1>INVOICE 3-2-1</h1>
+      <div id="company" class="clearfix">
+        <div>Company Name</div>
+        <div>Al Thayiz,<br /></div>
+        <div>(602) 519-0450</div>
+        <div><a href="mailto:company@example.com">company@example.com</a></div>
+      </div>
+      <div id="project">
+        <div><span>Name:</span> <%= orderDetails.shippingAddress.name %></div>
+        <div><span>ADDRESS:</span> <%= orderDetails.shippingAddress.address %>, <%= orderDetails.shippingAddress.city %>, <%= orderDetails.shippingAddress.state %> - <%= orderDetails.shippingAddress.pincode %></div>
+        <div><span>Mobile:</span> <%= orderDetails.shippingAddress.mobile %></div>
+        <div><span>DATE:</span> <%= new Date(orderDetails.orderDate).toLocaleDateString() %></div>
+    </div>
+    
+    </header>
+    <main>
+      <table>
+        <thead>
+          <tr>
+            <th class="service">Product Name</th>
+            <th>PRICE</th>
+            <th>QTY</th>
+            <th>TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+            <% orderDetails.products.forEach(product => { %>
+                <tr>
+                    <td class="service"><%= product.productName %></td>
+                    <td class="unit">₹<%= product.price %></td>
+                    <td class="qty"><%= product.quantity %></td>
+                    <td class="total">₹<%= product.price * product.quantity %></td>
+                </tr>
+            <% }); %>
+            <tr>
+                <td colspan="3">SUBTOTAL</td>
+                <td class="total">₹<%= orderDetails.totalAmount %></td>
+            </tr>
+            <!-- <tr>
+                <td colspan="3">Payment Method</td>
+                <td class="total"><%= orderDetails.paymentMethod %></td>
+            </tr> -->
+            <!-- <tr>
+                <td colspan="3">TAX 25%</td>
+                <td class="total">₹<%= orderDetails.totalAmount * 0.25 %></td>
+            </tr> -->
+            <tr>
+                <td colspan="3" class="grand total">GRAND TOTAL</td>
+                <td class="grand total">₹<%= orderDetails.totalAmount %></td>
+            </tr>
+        </tbody>
+      </table>
+      <div id="notices">
+        <div>NOTICE:Payment Method is <%= orderDetails.paymentMethod %></div>
+        <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
+      </div>
+    </main>
+    <footer>
+      Invoice was created on a computer and is valid without the signature and seal.
+    </footer>
+  </body>
+</html>

@@ -40,6 +40,7 @@
                                     <tr>
                                         <!-- <th>#ID</th> -->
                                         <th scope="col">Products</th>
+                                        <th scope="col">Brand</th>
                                         <th scope="col">Category</th>
                                         <th scope="col">Price</th>
                                         <th scope="col">Status</th>
@@ -59,7 +60,7 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            
+                                            <td><%= products[i].brand %></td>
                                             <td><%= products[i].category.name %></td>
                                             <td><%= products[i].price %></td>
                                             <td><%= products[i].status ? 'Active' : 'Inactive' %></td>
@@ -74,12 +75,13 @@
                                                         </button>
                                                     </form>
                                                    
-                                                  </td>
-                                                  <td>
+                                                  <!-- </td>
+                                                  <td> -->
                                                     <a href="/admin/editProduct?id=<%= products[i]._id %>" class="btn btn-primary btn-sm">Edit</a>
                                                     
                                                 </td>
                                         </tr>
+                                        
                                     <% } %>
                                 </tbody>
                             </table>

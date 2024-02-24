@@ -78,7 +78,8 @@ userRoutes.post("/apply-coupon",checkOutController.applyCouupon)
 userRoutes.get("/changePassword",isAuth.isUserLogin,profileController.loadChangePassword)
 userRoutes.post("/changePassword",profileController.changePassword)
 userRoutes.get("/wallet",isAuth.isUserLogin,profileController.loadWallet)
-
-
+userRoutes.get('/search', userController.searchProducts);
+userRoutes.get('/sort', userController.sort);
+userRoutes.get("/invoice/:orderId",isAuth.isUserLogin,profileController.loadInvoice)
 
 module.exports=userRoutes

@@ -1,25 +1,7 @@
 <%- include('./header.ejs') %>
     <!-- Header part end-->
 <br>
-    <!--================Home Banner Area =================-->
-    <!-- breadcrumb start-->
-    <!-- <section class="breadcrumb breadcrumb_bg">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="breadcrumb_iner">
-                        <div class="breadcrumb_iner_item">
-                            <h2>Shop Category</h2>
-                            <p>Home <span>-</span> Shop Category</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> -->
-    <!-- breadcrumb start-->
-
-    <!--================Category Product Area =================-->
+<!--================Category Product Area =================-->
     <section class="cat_product_area section_padding">
         <div class="container">
             <div class="row">
@@ -27,131 +9,59 @@
                     <div class="left_sidebar_area">
                         <aside class="left_widgets p_filter_widgets">
                             <div class="l_w_title">
-                              <h3>Browse Categories</h3>
-                            </div>
-                            <div class="widgets_inner">
-                              <ul class="list">
-                                <!-- Display all categories with links to filter by each category -->
-                                <% for (const category of allCategories) { %>
-                                  <li>
-                                    <a href="/loadShop?category=<%= category._id %>"><%= category.name %></a>
-                                    <!-- You can also display the number of products in each category -->
-                                    <span>(<%= categoryProductCounts.find(item => item.categoryId.toString() === category._id.toString()).count || 0 %>)</span>
-                                  </li>
-                                <% } %>
-                              </ul>
-                            </div>
-                          </aside>
-
-                        <!-- <aside class="left_widgets p_filter_widgets">
-                            <div class="l_w_title">
-                                <h3>Product filters</h3>
+                                <h3>Browse Categories</h3>
                             </div>
                             <div class="widgets_inner">
                                 <ul class="list">
+                                    <!-- Display all categories with links to filter by each category -->
+                                    <% for (const category of allCategories) { %>
                                     <li>
-                                        <a href="#">Apple</a>
+                                        <a href="/loadShop?category=<%= category._id %>" style="color: black;"><strong><%= category.name %></strong></a>
+                                        <!-- You can also display the number of products in each category -->
+                                        <span>(<%= categoryProductCounts.find(item => item.categoryId.toString() === category._id.toString()).count || 0 %>)</span>
+                                        <!-- Display brands related to the current category -->
+                                        
                                     </li>
-                                    <li>
-                                        <a href="#">Asus</a>
-                                    </li>
-                                    <li class="active">
-                                        <a href="#">Gionee</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Micromax</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Samsung</a>
-                                    </li>
-                                </ul>
-                                <ul class="list">
-                                    <li>
-                                        <a href="#">Apple</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Asus</a>
-                                    </li>
-                                    <li class="active">
-                                        <a href="#">Gionee</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Micromax</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Samsung</a>
-                                    </li>
+                                    <ul class="brands-list">
+                                        <li style="color:grey;"><strong>Brands:</strong></li>
+                                        <% for (const brand of brandsByCategory[category._id] || []) { %>
+                                        <li><a href="/loadShop?category=<%= category._id %>&brand=<%= encodeURIComponent(brand) %>"><%= brand %></a></li>
+                                        <% } %>
+                                    </ul>
+                                    <% } %>
                                 </ul>
                             </div>
-                        </aside> -->
+                            
+                            
+                            
+                              
 
-                        <!-- <aside class="left_widgets p_filter_widgets">
-                            <div class="l_w_title">
-                                <h3>Color Filter</h3>
+                        <div class="l_w_title"> 
+                         <h3>Sort Products</h3>
                             </div>
-                            <div class="widgets_inner">
-                                <ul class="list">
-                                    <li>
-                                        <a href="#">Black</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Black Leather</a>
-                                    </li>
-                                    <li class="active">
-                                        <a href="#">Black with red</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Gold</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Spacegrey</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </aside> -->
-
-                        <!-- <aside class="left_widgets p_filter_widgets price_rangs_aside">
-                            <div class="l_w_title">
-                                <h3>Price Filter</h3>
-                            </div>
-                            <div class="widgets_inner">
-                                <div class="range_item">
-                                    <div id="slider-range"></div>
-                                    <input type="text" class="js-range-slider" value="" />
-                                    <div class="d-flex">
-                                        <div class="price_text">
-                                            <p>Price :</p>
-                                        </div>
-                                        <div class="price_value d-flex justify-content-center">
-                                            <input type="text" class="js-input-from" id="amount" readonly />
-                                            <span>to</span>
-                                            <input type="text" class="js-input-to" id="amount" readonly />
-                                        </div>
-                                    </div>
+                              <div class="price-slider">
+                                <span class="price-label">PRICE</span>
+                                <div class="price-options">
+                                    <div class="price-option" data-min="0" data-max="999">₹0 - ₹999</div>
+                                    <div class="price-option" data-min="1000" data-max="1999">₹1000 - ₹1999</div>
+                                    <div class="price-option" data-min="2000" data-max="2999">₹2000 - ₹2999</div>
+                                    <div class="price-option" data-min="3000" data-max="3999">₹3000 - ₹3999</div>
+                                    <div class="price-option" data-min="4000" data-max="10000">₹4000+</div>
                                 </div>
-                            </div>
-                        </aside> -->
+                            </div>  
+                          </aside>
                     </div>
                 </div>
+
+
                 <div class="col-lg-9">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="product_top_bar d-flex justify-content-between align-items-center">
-                                <div class="single_product_menu d-flex">
-                                    <div class="input-group">
-                                        <input type="text" id="searchInput" class="form-control" placeholder="Search" aria-describedby="inputGroupPrepend">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="inputGroupPrepend"><i class="ti-search"></i></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <% if (message) { %>
+                        <h3 style="color: red;"><%= message %></h3>
+                        <% } else { %>
 
                     <section class="cat_product_area section_padding">
                         <div class="container">
-                            <div class="row align-items-center justify-content-between">
+                            <div class="row align-items-center justify-content-between" id="searchResults">
                                 <% for (let i = 0; i < products.length; i++) { %>
                                     <% if (products[i].status  && products[i].category.status) { %> <!-- Check product status -->
                                         <div class="col-lg-4 col-sm-6">
@@ -173,7 +83,8 @@
                             </div>
                         </div>
                     </section>
-                    
+                    <% } %>
+                </div>
                    <!-- ------------- pagination----------- -->
                         <div class="col-lg-12">
                             <div class="pageination">
@@ -188,70 +99,13 @@
                               </nav>
                             </div>
                           </div>
-                          
-
 
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!--================End Category Product Area =================-->
-
-    <!-- product_list part start-->
-    <!-- <section class="product_list best_seller">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-12">
-                    <div class="section_tittle text-center">
-                        <h2>Best Sellers <span>shop</span></h2>
-                    </div>
-                </div>
-            </div>
-            <div class="row align-items-center justify-content-between">
-                <div class="col-lg-12">
-                    <div class="best_product_slider owl-carousel">
-                        <div class="single_product_item">
-                            <img src="img/product/product_1.png" alt="">
-                            <div class="single_product_text">
-                                <h4>Quartz Belt Watch</h4>
-                                <h3>$150.00</h3>
-                            </div>
-                        </div>
-                        <div class="single_product_item">
-                            <img src="img/product/product_2.png" alt="">
-                            <div class="single_product_text">
-                                <h4>Quartz Belt Watch</h4>
-                                <h3>$150.00</h3>
-                            </div>
-                        </div>
-                        <div class="single_product_item">
-                            <img src="img/product/product_3.png" alt="">
-                            <div class="single_product_text">
-                                <h4>Quartz Belt Watch</h4>
-                                <h3>$150.00</h3>
-                            </div>
-                        </div>
-                        <div class="single_product_item">
-                            <img src="img/product/product_4.png" alt="">
-                            <div class="single_product_text">
-                                <h4>Quartz Belt Watch</h4>
-                                <h3>$150.00</h3>
-                            </div>
-                        </div>
-                        <div class="single_product_item">
-                            <img src="img/product/product_5.png" alt="">
-                            <div class="single_product_text">
-                                <h4>Quartz Belt Watch</h4>
-                                <h3>$150.00</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> -->
-    <!-- product_list part end-->
+    
 
     <!--::footer_part start::-->
     <footer class="footer_part">
@@ -384,30 +238,148 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 <!-- ... (previous HTML code) ... -->
 
 <script>
+   $(document).ready(function() {
+    // Attach an event listener to the search input field
+    $('#search_input').on('input', function() {
+        // Get the search term from the input field
+        const searchTerm = $(this).val();
+
+        // Send an AJAX request to the backend to search for products
+        $.ajax({
+            method: 'GET',
+            url: '/search',
+            data: { q: searchTerm },
+            success: function(response) {
+                // Update the UI with the search results
+                displaySearchResults(response.products);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error searching products:', error);
+                // Optionally, display an error message on the UI
+                $('#searchResults').html('<p>Error searching products. Please try again later.</p>');
+            }
+        });
+    });
+
+    // Function to display search results on the UI
+    function displaySearchResults(products) {
+        // Clear previous search results
+        $('#searchResults').empty();
+
+        // Check if there are any search results
+        if (products.length === 0) {
+            $('#searchResults').html('<p>No products found.</p>');
+            return;
+        }
+
+        // Iterate over the products and display them
+        products.forEach(function(product) {
+            // Append each product to the search results container
+            $('#searchResults').append(`
+                <div class="col-lg-4 col-sm-6">
+                    <a href="/product/${product._id}">
+                        <div class="single_product_item">
+                            <img src="/uploads/resized/${product.productImages[0]}" alt="${product.name}">
+                            <div class="single_product_text">
+                                <h4>${product.name}</h4>
+                                <h3>₹${product.price}</h3>
+                                ${product.quantity < 4 ? '<h3 style="color: red;">Stock is less than 4. Hurry up!</h3>' : ''}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            `);
+        });
+    }
+});
+</script>
+<script>
     $(document).ready(function() {
-        // Add an event listener to the search input
-        $('#searchInput').on('input', function() {
-            const searchTerm = $(this).val().toLowerCase();
+        // Select all div elements with the class 'price-option'
+        const priceOptions = $('.price-option');
 
-            // Filter all products based on the search term
-            $('.single_product_item').each(function() {
-                const productName = $(this).find('.single_product_text h4').text().toLowerCase();
-                const description = $(this).find('.single_product_text p').text().toLowerCase();
+        // Attach a click event listener to each option
+        priceOptions.on('click', function() {
+            // Remove the 'selected' class from all options
+            priceOptions.removeClass('selected');
+            
+            // Add the 'selected' class to the clicked option
+            $(this).addClass('selected');
 
-                if (productName.includes(searchTerm) || description.includes(searchTerm)) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
+            // Retrieve data-min and data-max attributes of the clicked option
+            const min = $(this).data('min');
+            const max = $(this).data('max');
+            
+            // Log or do something with the min and max values
+            console.log('Min:', min);
+            console.log('Max:', max);
+
+            // Send AJAX request to the backend
+            $.ajax({
+                url: '/sort',
+                type: 'GET',
+                data: { minPrice: min, maxPrice: max }, // Send both minPrice and maxPrice
+                success: function(response) {
+                    // Handle successful response from the server
+                    console.log(response);
+                    // Update UI to show the products
+                    showProducts(response.filteredProducts);
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors or other status codes
+                    console.error(xhr.responseText);
                 }
             });
         });
+
+        // Function to display products on the webpage
+        function showProducts(products) {
+            const searchResults = $('#searchResults');
+            searchResults.empty(); // Clear previous search results
+
+            // Check if products array is empty
+            if (products.length === 0) {
+                // Display "No products found" message
+                searchResults.append('<h3 style="color:red;">No products found</h3>');
+
+            } else {
+                // Iterate over products and create HTML elements for each product
+                products.forEach(product => {
+                    const productItem = `
+                        <div class="col-lg-4 col-sm-6">
+                            <a href="/product/${product._id}">
+                                <div class="single_product_item">
+                                    <img src="/uploads/resized/${product.productImages[0]}" alt="${product.name}">
+                                    <div class="single_product_text">
+                                        <h4>${product.name}</h4>
+                                        <h3>₹${product.price}</h3>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    `;
+                    searchResults.append(productItem); // Append the product item to the search results container
+                });
+            }
+        }
     });
 </script>
 
-<!-- ... (remaining HTML code) ... -->
+
+<!-- <script>
+    function handleBrandSelection(selectElement) {
+        const selectedCategory = selectElement.parentNode.querySelector('a').getAttribute('href').split('=')[1];
+        const selectedBrand = selectElement.value;
+        let url = "/loadShop?category=" + selectedCategory;
+        if (selectedBrand !== "#") {
+            url += "&brand=" + selectedBrand;
+        }
+        window.location.href = url;
+    }
+</script> -->
 
 
-<!-- ... (remaining HTML code) ... -->
+
 
 </body>
 

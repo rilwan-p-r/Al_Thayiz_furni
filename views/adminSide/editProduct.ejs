@@ -22,6 +22,10 @@
                                         <input type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name" value="<%=product.name%>" />
                                     </div>
                                     <div class="mb-4">
+                                        <label for="brand_name" class="form-label">Brand</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="brand" name="brand" value="<%=product.brand%>"/>
+                                    </div>
+                                    <div class="mb-4">
                                         <label class="form-label">Full description</label>
                                         <textarea placeholder="Type here" class="form-control" rows="4" name="description" ><%=product.description%></textarea>
                                     </div>
@@ -30,7 +34,7 @@
                                             <div class="mb-4">
                                                 <label class="form-label">Price</label>
                                                 <div class="row gx-2">
-                                                    <input placeholder="$" type="text" class="form-control" name="price" value="<%=product.price%>" />
+                                                    <input placeholder="₹" type="text" class="form-control" name="price" value="<%=product.price%>" />
                                                 </div>
                                             </div>
                                         </div>

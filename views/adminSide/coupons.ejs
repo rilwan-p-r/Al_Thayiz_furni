@@ -29,6 +29,10 @@
                                         <input type="text" placeholder="Type here" class="form-control" id="Coupon_discount" name="discount" />
                                     </div>
                                     <div class="mb-4">
+                                        <label for="Coupon_meetAmount" class="form-label">Meet Amount</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Coupon_meetAmount" name="meetAmount" />
+                                    </div>
+                                    <div class="mb-4">
                                         <label for="Coupon_description" class="form-label">Description</label>
                                         <input type="text" placeholder="Type here" class="form-control" id="Coupon_description" name="description" />
                                     </div>
@@ -50,6 +54,7 @@
                                                 <th>Name</th>
                                                 <th>Code</th>
                                                 <th>Discount</th>
+                                                <th>Meet Amount</th>
                                                 <th>Expiry Date</th>
                                                 <th>isActive</th>
                                                 <th>Action</th>
@@ -61,11 +66,13 @@
                                                     <td><%= coupon.title %></td>
                                                     <td><%= coupon.code %></td>
                                                     <td><%= coupon.discount %></td>
+                                                    <td><%= coupon.meetAmount %></td>
                                                     <td><%= new Date(coupon.expiryDate).toISOString().split('T')[0] %></td>
                                                     <td><%= coupon.status %></td>
                                                     <td>
-                                                        <a href="/admin/editCoupons/<%= coupon._id %>" style="color: green;">Edit</a>
-                                                        <a href="/admin/deleteCoupon/<%= coupon._id %>" style="color: red;" onclick="return confirm('Are you sure you want to delete this coupon?')">Delete</a>
+                                                        <a href="#" class="edit-coupon-link" data-coupon-id="<%= coupon._id %>" style="color: green;">Edit</a>
+                                                        <a href="#" class="delete-coupon-link" data-coupon-id="<%= coupon._id %>" style="color: red;">Delete</a>
+
                                                     </td>
                                                     
                                                 </tr>
@@ -113,13 +120,14 @@
                 const titleInput = document.getElementById('Coupon_title').value;
                 const codeInput = document.getElementById('Coupon_code').value;
                 const discountInput = document.getElementById('Coupon_discount').value;
+                const meetAmount = document.getElementById('Coupon_meetAmount').value;
                 const descriptionInput = document.getElementById('Coupon_description').value;
                 const expiryDateInput = document.getElementById('Coupon_expiry').value;
         
                 // Validate all fields
                 if (!isValidInput(titleInput) || !isValidInput(codeInput) ||
                     !isValidInput(discountInput) || !isValidInput(descriptionInput) ||
-                    !isValidInput(expiryDateInput)) {
+                    !isValidInput(expiryDateInput) || !isValidInput(meetAmount)){
                     alert('All fields are required. Please fill them out.');
                     return;
                 }
@@ -130,7 +138,7 @@
                     return;
                 }
                 event.target.submit();
-            });
+            }); 
     
             function isValidCouponCode(code) {
                 return code.length >= 3 && /\d/.test(code);
@@ -139,6 +147,58 @@
                 return input.trim() !== ''
             }
         </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    // Add event listener to the delete link
+    document.querySelectorAll('.delete-coupon-link').forEach(link => {
+      link.addEventListener('click', function(event) {
+        event.preventDefault();
+        
+        const couponId = this.getAttribute('data-coupon-id');
+        
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You are about to delete this coupon.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // If user confirms, redirect to the delete URL
+            window.location.href = '/admin/deleteCoupon/' + couponId;
+          }
+        });
+      });
+    });
+
+
+    document.querySelectorAll('.edit-coupon-link').forEach(link => {
+    link.addEventListener('click', function(event) {
+      event.preventDefault();
+      
+      const couponId = this.getAttribute('data-coupon-id');
+      
+      // Show SweetAlert confirmation dialog
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to edit this coupon.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, edit it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // If user confirms, redirect to the edit URL
+          window.location.href = '/admin/editCoupons/' + couponId;
+        }
+      });
+    });
+  });
+  </script>
         
     </body>
 </html>

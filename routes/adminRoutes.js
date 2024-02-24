@@ -63,4 +63,5 @@ adminRoutes.get("/coupons",isAuth.isAdminAuth,adminController.loadCoupons)
 adminRoutes.post("/coupons",adminController.addCoupon)
 adminRoutes.get("/editCoupons/:id",isAuth.isAdminAuth,adminController.loadEditCoupons)
 adminRoutes.post("/editCoupons/:id",adminController.editCoupons);
-adminRoutes.get("/deleteCoupon/:id",adminController.deleteCoupon)
+adminRoutes.get("/deleteCoupon/:id",adminController.deleteCoupon);
+adminRoutes.get("/loadSalesreport",isAuth.isAdminAuth,adminController.loadSalesreport)

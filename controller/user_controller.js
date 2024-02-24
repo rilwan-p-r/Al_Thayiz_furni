@@ -245,6 +245,10 @@ if(loginError){
     req.flash("error", loginError);
    return res.redirect("/login")
 }
+if (user.isBlocked) {
+  loginError = "Your account is blocked. Please contact support.";
+}
+
 if(!user.isVerified){
     loginError="account has not varified please enter otp"
 }
@@ -288,8 +292,9 @@ const loadShop = async (req, res) => {
     const perPage = 6;
 
     const selectedCategoryId = req.query.category || null;
+    const selectedBrand = req.query.brand || null;
     const allCategories = await Category.find();
-    
+
     // Compute product count for each category
     const categoryProductCounts = await Promise.all(
       allCategories.map(async (category) => {
@@ -298,25 +303,51 @@ const loadShop = async (req, res) => {
       })
     );
 
-    const query = selectedCategoryId ? { category: selectedCategoryId } : {};
+    let query = {};
+    if (selectedCategoryId) {
+      query.category = selectedCategoryId;
+    }
+    if (selectedBrand) {
+      query.brand = selectedBrand;
+    }
 
     const products = await Product.find(query)
       .skip((page - 1) * perPage)
       .limit(perPage)
       .populate("category");
 
+    // Retrieve brands related to each category
+    const brandsByCategory = {};
+    for (const category of allCategories) {
+      const brands = await Product.distinct("brand", { category: category._id });
+      brandsByCategory[category._id] = brands;
+    }
+
     const user = await usersDb.findOne({ _id: userId });
 
-     // Count the total number of products for pagination
-     const totalProducts = await Product.countDocuments();
-     const totalPages = Math.ceil(totalProducts / perPage);
+    // Count the total number of products for pagination
+    const totalProducts = await Product.countDocuments();
+    const totalPages = Math.ceil(totalProducts / perPage);
 
-    res.render("userSide/shopsCategory", { user, products, currentPage: page, totalPages, allCategories, selectedCategoryId, categoryProductCounts });
+    res.render("userSide/shopsCategory", {
+      user,
+      products,
+      currentPage: page,
+      totalPages,
+      allCategories,
+      selectedCategoryId,
+      selectedBrand,
+      categoryProductCounts,
+      brandsByCategory,
+      message: products.length === 0 ? "No products found." : null,
+    });
   } catch (error) {
     console.log("Error loading shops page:", error);
     res.status(500).send("Internal Server Error");
   }
 };
+
+
 
 // loadSingleProductPage
 const loadProductPage = async (req, res) => {
@@ -372,13 +403,52 @@ const deleteotp = async (req, res) => {
       // Delete the OTP document associated with the provided email
       await otpModel.deleteOne({ email });
       console.log('delete expired otp');
-      // Respond with success
-      // res.json({ success: true });
+   
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 }
+
+const searchProducts = async (req, res) => {
+  try {
+      const searchTerm = req.query.q; 
+      const products = await Product.find({
+          $or: [
+              { name: { $regex: new RegExp(searchTerm, 'i') } },
+          ]
+      });
+      if (products.length === 0) {
+          return res.status(404).json({ message: 'No products found' });
+      }
+
+      return res.status(200).json({ products }); 
+  } catch (error) {
+      console.error('Error searching products:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const sort = async (req, res) => {
+  try {
+      const minPrice = parseInt(req.query.minPrice); // Convert to integer
+      const maxPrice = parseInt(req.query.maxPrice); // Convert to integer
+
+      console.log("Min Price:", minPrice);
+      console.log("Max Price:", maxPrice);
+
+      const filteredProducts = await Product.find({
+          price: { $gte: minPrice, $lte: maxPrice } 
+      }).sort({ price: -1 });
+
+      console.log("Filtered Products:", filteredProducts);
+
+      return res.status(200).json({ filteredProducts });
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 
 // exportssss--------------------
@@ -395,5 +465,7 @@ module.exports={
   loadProductPage,
   resendOTP,
   deleteotp,
+  searchProducts,
+  sort
   }
 

@@ -6,6 +6,10 @@
     const Wallet = require("../model/wallet")
     const sharp = require("sharp")
     const path=  require('path')
+    const moment = require('moment');
+
+
+ 
       // loadAdminLogIn-------
     const loadLogIn = async(req,res)=>{
         try{
@@ -54,20 +58,176 @@
     };
 
     // loadDashBoard-------
-    const loadAdmin = async(req,res)=>{
-        try{
-            if(req.session.isLogged){
-                res.render("adminSide/adminPanel")
+    const loadAdmin = async (req, res) => {
+        try {
+            if (req.session.isLogged) {
+                const deliveredOrders = await Order.find({ status: "Delivered" });
+                const totalCount = await Order.countDocuments();
+                const totalProduct = await Product.countDocuments();
+                const allProducts = await Product.find();
+                const totalCategory = await category.countDocuments();
+                const currentYear = new Date().getFullYear();
+                const monthLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                const ordersThisYear = deliveredOrders.filter(order => new Date(order.orderDate).getFullYear() === currentYear);
+                
+                const ordersByMonth = ordersThisYear.reduce((accumulator, order) => {
+                    const month = new Date(order.orderDate).getMonth(); // Get the month index (0-11)
+                    accumulator[month] = (accumulator[month] || 0) + 1;
+                    return accumulator;
+                }, {});
+                // Map order counts by month to corresponding labels
+                const orderCountsByMonth = monthLabels.map((label, index) => ordersByMonth[index] || 0);
+                console.log('Order counts by month:', orderCountsByMonth);
+
+                const productsThisYear = allProducts.filter(product => new Date(product.createdAt).getFullYear() === currentYear);
+                // Count the number of products for each month
+                const productsByMonth = productsThisYear.reduce((accumulator, product) => {
+                    const month = new Date(product.createdAt).getMonth(); // Get the month index (0-11)
+                    accumulator[month] = (accumulator[month] || 0) + 1;
+                    return accumulator;
+                }, {});
+                const productCountsByMonth = monthLabels.map((label, index) => productsByMonth[index] || 0);
+                console.log('Product counts by month:', productCountsByMonth);
+
+                const yearLabels = [2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030];
+                const ordersByYear = {};
+                const productsByYear = {};
+
+                deliveredOrders.forEach(order => {  
+                const year = new Date(order.orderDate).getFullYear();
+                if (!ordersByYear[year]) {
+                ordersByYear[year] = 0;
+                 }
+                ordersByYear[year]++;
+
+                allProducts.forEach(product => {
+                    const productYear = new Date(product.createdAt).getFullYear();
+                    if (!productsByYear[productYear]) {
+                        productsByYear[productYear] = 0;
+                    }
+                    productsByYear[productYear]++;
+                });                
+                 });
+
+            // Map order and product counts by year to corresponding labels
+            const orderCountsByYear = yearLabels.map(year => ordersByYear[year] || 0);
+            const productCountsCurrentYear = productsByYear[currentYear] || 0;
+            delete productsByYear[currentYear];
+            const productCountsOtherYears = Object.values(productsByYear).reduce((acc, count) => acc + count, 0);
+
+            console.log('Order counts by year:', orderCountsByYear); 
+            console.log('Product counts in current year:', productCountsCurrentYear);
+            console.log('Product counts in other years:', productCountsOtherYears);
+            // Map product counts by year to corresponding labels
+          const productCountsByYear = yearLabels.map(year => {
+          if (year === currentYear) {
+          return productCountsCurrentYear;
+           } else {
+           return productsByYear[year] || 0;
+          }
+          });
+         console.log("jjjjjjjjjjjjjjjjjjj",productCountsByYear);
+
+
+                const totalRevenue = deliveredOrders.reduce((acc, order) => acc + order.totalAmount, 0);
+    
+                // Group delivered orders by month and year and calculate monthly earnings
+                    const monthlyEarnings = {};
+                    deliveredOrders.forEach(order => {
+                        const orderDate = new Date(order.orderDate);
+                        const monthYear = `${orderDate.getMonth() + 1}-${orderDate.getFullYear()}`;
+                        if (!monthlyEarnings[monthYear]) {
+                            monthlyEarnings[monthYear] = 0;
+                        }
+                        monthlyEarnings[monthYear] += order.totalAmount;
+                    });
+                    const monthlyEarningsArray = Object.entries(monthlyEarnings).map(([key, value]) => ({ monthYear: key, earnings: value }));
+                    console.log("Monthly Earnings:", monthlyEarnings);
+                    console.log("Monthly Earnings Array:", monthlyEarningsArray);
+                    monthlyEarningsArray.sort((a, b) => {
+                        const [monthA, yearA] = a.monthYear.split('-').map(Number);
+                        const [monthB, yearB] = b.monthYear.split('-').map(Number);
+                        if (yearA !== yearB) {
+                            return yearB - yearA; 
+                        }
+                        return monthB - monthA;
+                    });
+                    const latestMonthInfo = monthlyEarningsArray[0];
+                    console.log("Latest Month Information:", latestMonthInfo);
+                    
+
+                const topProducts = await Order.aggregate([
+                    { $match: { status: "Delivered" } },
+                    { $unwind: "$products" },
+                    {
+                        $group: {
+                            _id: "$products.productId",
+                            totalOrdered: { $sum: "$products.quantity" },
+                        }
+                    },
+                    { $sort: { totalOrdered: -1 } },
+                    { $limit: 5 },
+                    {
+                        $lookup: {
+                            from: "products", // Assuming your product collection is named "products"
+                            localField: "_id",
+                            foreignField: "_id",
+                            as: "product"
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            productId: "$_id",
+                            productName: "$product.name",
+                            productBrand: "$product.brand",
+                            productAmount: "$product.price",
+                            categoryId: "$product.category",
+                            productCategory: "$product.categoryName",
+                            totalOrdered: 1
+                        }
+                    }
+                ]);
+                console.log('Top 5 most ordered products:', topProducts);
+
+                const categoryIds = topProducts.map(product => product.categoryId);
+                console.log("Category IDs:", categoryIds);
+                
+                const categoryIdsFlat = categoryIds.flat();
+                console.log("Flattened Category IDs:", categoryIdsFlat);
+                
+                // Array to store found categories
+                const foundCategories = [];
+                
+                for (const categoryId of categoryIdsFlat) {
+                const category = await Product.findOne({category:categoryId});
+                
+                    if (category) {
+                        foundCategories.push(category);
+                    }
+                }
+                console.log("Found Categories:", foundCategories);
+                const categoryCounts = [];
+
+for (const categoryId of categoryIdsFlat) {
+    const count = await Product.countDocuments({ category: categoryId });
+    categoryCounts.push(count);
+}
+
+console.log("Category Counts:", categoryCounts);
+
+        
+                res.render("adminSide/adminPanel", { totalRevenue, totalCount, totalProduct, totalCategory,latestMonthInfo,
+                     orderCountsByMonth,productCountsByMonth, topProducts, productCountsByYear,orderCountsByYear,foundCategories, categoryCounts });
+            } else {
+                res.redirect("/admin/admin_login");
             }
-            else{
-                res.redirect("/admin/admin_login")
-            }
-            
-        }
-        catch(error){
-    console.log(error);
+    
+        } catch (error) {
+            console.log(error);
         }
     }
+    
 
     // admin logout module--------
     const adminLogout = async(req,res)=>{
@@ -266,7 +426,7 @@ const deleteImage = async (req, res) => {
 
 
         console.log('adshgdhgdjgkd',req.body);
-        const { product_name, description, price, quantity, category,productId } = req.body;
+        const { product_name, brand, description, price, quantity, category,productId } = req.body;
         console.log('akska',productId);
 
         console.log(req.files);
@@ -290,7 +450,7 @@ const deleteImage = async (req, res) => {
             productImages.push(req.files[i].filename)
         }
 
-     const proData =  await  Product.updateOne({_id:productId},{$set:{name:product_name,description:description,price:price,quantity:quantity,category:category,productImages:productImages}})
+     const proData =  await  Product.updateOne({_id:productId},{$set:{name:product_name,brand:brand,description:description,price:price,quantity:quantity,category:category,productImages:productImages}})
        
      if(proData){
         res.redirect('/admin/loadProductList')
@@ -573,7 +733,7 @@ const deleteImage = async (req, res) => {
     const addCoupon = async (req, res) => {
         try {
             if (req.session.isLogged) {
-                const { title, code, discount, description, expiryDate } = req.body;
+                const { title, code, discount, description, expiryDate, meetAmount } = req.body;
     
                 // Validate coupon code
                 if (!isValidCouponCode(code)) {
@@ -585,7 +745,8 @@ const deleteImage = async (req, res) => {
                     code,
                     discount,
                     description,
-                    expiryDate
+                    expiryDate,
+                    meetAmount
                 });
     
                 await newCoupon.save();
@@ -621,10 +782,10 @@ const deleteImage = async (req, res) => {
     const   editCoupons = async(req,res)=>{
         try{
             const couponId = req.params.id;
-        const { title, code, discount, description, expiryDate } = req.body;
+        const { title, code, discount, description, expiryDate, meetAmount } = req.body;
          const updatedCoupon = await Coupon.findByIdAndUpdate(
             couponId,
-            { title, code, discount, description, expiryDate },
+            { title, code, discount, description, expiryDate, meetAmount },
             { new: true }
         );
 
@@ -652,6 +813,17 @@ const deleteImage = async (req, res) => {
             console.log(error);
         }
     }
+
+        const loadSalesreport = async(req,res)=>{
+            try{
+                const sales = await Order.find({status:'Delivered'}).populate('userId');
+                console.log("salesssssssssssssssssssssss",sales);
+                res.render("adminSide/salesReport",{moment,sales})
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
 
 
     
@@ -684,5 +856,6 @@ const deleteImage = async (req, res) => {
         addCoupon,
         loadEditCoupons,
         editCoupons,
-        deleteCoupon
+        deleteCoupon,
+        loadSalesreport
     }

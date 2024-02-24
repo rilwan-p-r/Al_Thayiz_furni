@@ -73,6 +73,6 @@ schema.pre('save', async function (next) {
     next();
 });
 
-const User = mongoose.model('UsersDatas', schema);
+const User = mongoose.model('UsersData', schema);
 module.exports = User;
 // module.exports=mongoose.model("usersDatas",schema)

@@ -22,6 +22,10 @@
                 ref: 'category',
                 required: true,
             },
+            brand:{
+                type: String,
+                required:true,
+            },
             categoryName: {
                 type: String,
             },
@@ -34,6 +38,10 @@
             status: {
                 type: Boolean,
                 default: true,
+            },
+            createdAt: {
+                type: Date,
+                default: Date.now
             }
         });
 

@@ -29,6 +29,10 @@
                                         <input type="text" placeholder="Type here" class="form-control" id="Coupon_discount" name="discount" value="<%= coupon.discount %>" />
                                     </div>
                                     <div class="mb-4">
+                                        <label for="Coupon_meetAmount" class="form-label">Meet Amount</label>
+                                        <input type="text" placeholder="Type here" class="form-control" id="Coupon_meetAmount" name="meetAmount" />
+                                    </div>
+                                    <div class="mb-4">
                                         <label for="Coupon_description" class="form-label">Description</label>
                                         <input type="text" placeholder="Type here" class="form-control" id="Coupon_description" name="description" value="<%= coupon.description %>" />
                                     </div>
@@ -75,13 +79,14 @@
                 const titleInput = document.getElementById('Coupon_title');
                 const codeInput = document.getElementById('Coupon_code');
                 const discountInput = document.getElementById('Coupon_discount');
+                const meetAmount = document.getElementById('Coupon_meetAmount').value;
                 const descriptionInput = document.getElementById('Coupon_description');
                 const expiryDateInput = document.getElementById('Coupon_expiry');
         
                 // Check if any input field is empty or contains only spaces
                 if (isEmptyOrSpaces(titleInput.value) || isEmptyOrSpaces(codeInput.value) ||
                     isEmptyOrSpaces(discountInput.value) || isEmptyOrSpaces(descriptionInput.value) ||
-                    isEmptyOrSpaces(expiryDateInput.value)) {
+                    isEmptyOrSpaces(expiryDateInput.value) || isEmptyOrSpaces(meetAmount.value)) {
                     alert('All fields are required. Please fill them out.');
                     return false; // Prevent form submission
                 }

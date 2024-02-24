@@ -25,6 +25,10 @@ const couponSchema = new mongoose.Schema({
         type: String,   
         default: 'Active',
     },
+    meetAmount: {
+        type: Number,
+        required: true
+    },
     usedByUsers: [{
         user_id: {
             type: mongoose.Types.ObjectId,

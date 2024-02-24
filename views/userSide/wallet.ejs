@@ -17,7 +17,7 @@
 <br>
     <div class="text-center">
         <h4 style="color: green;">Current Balance: <%= wallet ? wallet.balance : 'N/A' %></h4>
-        <button type="button" class="btn btn-primary">Add Cash</button>
+        <!-- <button type="button" class="btn btn-primary">Add Cash</button> -->
     </div>
     <br>
  <div class="table-responsive">
@@ -34,28 +34,30 @@
             <% 
             if (wallet && wallet.transactions && wallet.transactions.length > 0) {
                 // Sort transactions by date in descending order (latest transaction first)
-                wallet.transactions.sort((a, b) => {
-                    // Assuming date format is MM/DD/YYYY
-                    const dateA = new Date(a.date.split('/').reverse().join('-'));
-                    const dateB = new Date(b.date.split('/').reverse().join('-'));
-                    return dateB - dateA;
-                }).forEach(transaction => { 
-        %>
-            <tr>
-                <td class="font-weight-bold"><%= transaction.date %></td>
-                <td class="font-weight-bold <%= transaction.type === 'credit' ? 'text-success' : 'text-danger' %>"><%= transaction.type %></td>
-                <td class="font-weight-bold"><%= transaction.amount %></td>
-                <td class="font-weight-bold"><%= transaction.orderId %></td>
-            </tr>
-        <% 
+                const sortedTransactions = wallet.transactions.sort((a, b) => {
+                    // Assuming date format is in ISO 8601 (YYYY-MM-DDTHH:mm:ss.sssZ)
+                    return b.date.localeCompare(a.date);
+                });
+                
+                // Render sorted transactions
+                sortedTransactions.forEach(transaction => { 
+            %>
+                    <tr>
+                        <td class="font-weight-bold"><%= transaction.date %></td>
+                        <td class="font-weight-bold <%= transaction.type === 'credit' ? 'text-success' : 'text-danger' %>"><%= transaction.type %></td>
+                        <td class="font-weight-bold"><%= transaction.amount %></td>
+                        <td class="font-weight-bold"><%= transaction.orderId %></td>
+                    </tr>
+            <% 
                 }); 
             } else { 
-        %>
-            <tr>
-                <td colspan="4">No transactions found</td>
-            </tr>
-        <% } %>
-    </tbody>
+            %>
+                <tr>
+                    <td colspan="4">No transactions found</td>
+                </tr>
+            <% } %>
+        </tbody>
+        
     </table>
     
 </div>

@@ -25,13 +25,15 @@ const loadCheckOut = async(req,res)=>{
             const userId = req.session.userId
             user = await usersDb.findOne({_id:userId}).populate('addresses'); // Assuming the array of addresses
         }
-        if(user){
-            
-            const cartDetails = await Cart.findOne({ userId: user._id }).populate('items.product_id');
-            const coupons = await Coupon.find({ status: "Active" });
-
-            res.render("userSide/checkOut", { user, cartDetails,coupons });
-        }
+        if (user) {
+          if (user.isBlocked) {
+              req.flash("error", "Your account is blocked. Please contact support.");
+              return res.redirect("/login");
+          }
+          const cartDetails = await Cart.findOne({ userId: user._id }).populate('items.product_id');
+          const coupons = await Coupon.find({ status: "Active" });
+          res.render("userSide/checkOut", { user, cartDetails, coupons });
+      }
     } catch (error) {
         console.log(error);
         res.redirect("/login")
@@ -130,18 +132,18 @@ const orderConfirmation = async (req, res) => {
       await wallet.save();
       const order = await Order.create(newOrder);
 
-  // Create transaction history
-  const transaction = {
-    orderId: order._id, // Assign the orderId
-    type: "debit",
-    amount: totalAmount,
-    date: new Date()
-  };
+      // Create transaction history
+      const transaction = {
+        orderId: order._id, // Assign the orderId
+        type: "debit",
+        amount: totalAmount,
+        date: new Date()
+      };
 
-  wallet.transactions.push(transaction);
+      wallet.transactions.push(transaction);
 
-  // Save wallet with updated transaction
-  await wallet.save();
+      // Save wallet with updated transaction
+      await wallet.save();
 
       await Cart.findOneAndDelete({ userId });
 
@@ -151,12 +153,18 @@ const orderConfirmation = async (req, res) => {
     }
 
     // For other payment methods (e.g., COD)
+    if (payMethod === "Cod") {
+      if (totalAmount > 1500) {
+        return res.json({ error: "COD not allowed for orders above 1500" });
+      }
+    }
+
     const order = await Order.create(newOrder);
     await Cart.findOneAndDelete({ userId });
 
-    console.log("Order created:", order._id);
+    console.log("Order created:", order);
     if (payMethod === "Cod") {
-      return res.status(201).json({ codSuccess: true, order });
+      return res.status(201).json({ codSuccess: true, order: newOrder });
     } else {
       const razorpayOrder = await genarateRazorpay(order._id, totalAmount);
       return res.json({ razorpayOrder });
@@ -166,6 +174,7 @@ const orderConfirmation = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 const genarateRazorpay = async (orderId, subTotal) => {
   try {
@@ -218,6 +227,8 @@ const verifypayment = async (req, res) => {
 
 const applyCouupon = async(req,res)=>{
   const couponCode = req.body.couponCode;
+  const totalAmount = req.body.totalAmount;
+  console.log("vvvvvvvvvvvvvvvvv",totalAmount);
   const userId = req.session.userId;
   try{ 
     
@@ -232,6 +243,10 @@ const applyCouupon = async(req,res)=>{
 
     if (userId && coupon.usedByUsers && coupon.usedByUsers.some(user => user.user_id.equals(userId))) {
       return res.json({ success: false, message: 'Coupon already used by this user' });
+    }
+
+    if (coupon.meetAmount && totalAmount < coupon.meetAmount) {
+      return res.json({ success: false, message: 'Total amount does not meet the required amount for this coupon' });
     }
 
     // Mark the coupon as used by this user

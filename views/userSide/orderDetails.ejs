@@ -25,20 +25,21 @@
                                     <th scope="col">order ID</th>
                                     <th scope="col">Paymet Method</th>
                                     <th scope="col">Total</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col">Track Orders</th>
                                     <th scope="col">Payment Status</th>
                                     <th scope="col">Address</th>
                                     <th scope="col">Order Date</th>
                                     <% if (orders.some(order => order.status !== 'Returned')) { %>
                                         <th scope="col">Action</th>
                                     <% } %>
+                                    <th scope="col">View Order</th>
                                 </tr>
                             </thead>
                             <% orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate)); %>
-                           
+                               
                             <tbody>
                                 <% for (const order of orders) { %>
-                                    <tr onclick="viewOrder('<%= order._id %>')" style="cursor: pointer;">
+                                    <tr style="cursor: pointer;">
                                         <td style="color: green;">
                                             <%= order._id %>
                                         </td>
@@ -55,20 +56,28 @@
                                             <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.pincode %>
                                         </td>
                                         <td><%= new Date(order.orderDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
-                                        <% if (order.status !== 'Returned') { %>
+                                        <% if (orders.some(order => order.status !== 'Returned')) { %>
                                             <td>
-                                                <% if (order.status === 'Delivered' && !order.returnRequest) { %>
-                                                    <button id="returnButton_<%= order._id %>" class="btn btn-dark" onclick="returnOrder('<%= order._id %>')">Return</button>
-                                                <% } else if (order.returnRequest) { %>
-                                                    <button id="cancelReturnButton_<%= order._id %>" class="btn btn-danger" onclick="cancelReturn('<%= order._id %>')">Cancel Return</button>
-                                                <% } else if (order.status !== 'Cancelled') { %>
-                                                    <button class="btn btn-danger" onclick="cancelOrder('<%= order._id %>')">Cancel</button>
+                                                <% if (order.status !== 'Returned') { %>
+                                                    <% if (order.status === 'Delivered' && !order.returnRequest) { %>
+                                                        <button id="returnButton_<%= order._id %>" class="btn btn-dark" onclick="returnOrder('<%= order._id %>')">Return</button>
+                                                    <% } else if (order.returnRequest) { %>
+                                                        <button id="cancelReturnButton_<%= order._id %>" class="btn btn-danger" onclick="cancelReturn('<%= order._id %>')">Cancel Return</button>
+                                                    <% } else if (order.status !== 'Cancelled') { %>
+                                                        <button class="btn btn-danger" onclick="cancelOrder('<%= order._id %>')">Cancel</button>
+                                                    <% } %>
                                                 <% } %>
                                             </td>
                                         <% } %>
+                                        <td>
+                                            <button class="btn btn-primary" onclick="viewOrder('<%= order._id %>')">View Order</button>
+                                        </td>
                                     </tr>
                                 <% } %>
                             </tbody>
+                            
+                            
+                                                        
                         </table>
                     </div>
                  </div>

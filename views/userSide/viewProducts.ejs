@@ -32,9 +32,9 @@
                                 <% } %> <br><span><%= product.productName %></span>
                             </td>
                             <td>x<%= product.quantity %></td>
-                            <td>$<%= product.price %></td>
+                            <td>₹<%= product.price %></td>
                             <% const total = product.quantity * product.price; %>
-                            <td>$<%= total %></td>
+                            <td>₹<%= total %></td>
                             <% orderTotal += total; %>
                         </tr>
                     <% } %>
@@ -47,31 +47,37 @@
                 </table>
             </div>
         </div>
-        <div class="col-lg-4">
-          <div class="order_box">
-            <h2>Your Order Summary</h2>
-        
-            <ul class="list list_2">
-              <li>
-                <a>SUBTOTAL
-                  <span style="margin-left: 80px;"><%=orderTotal%></span>
-                  <input type="hidden" id="totalAmount" value="100">
-                </a>
-              </li>
-              <li>
-                <a>COUPON AMOUNT
-                  <span id="couponDiscount" style="margin-left: 35px;"><%= orderDetails ? orderDetails.discountAmount : 'N/A' %></span>
-                </a>
-              </li>
-              <br>
-              <li>
-                <a>Total
-                  <span id="totals" style="margin-left: 80px;"><%=orderDetails.totalAmount%></span>
-                </a>
-              </li>
-            </ul>
+          <div class="col-lg-4">
+            <div class="order_box">
+              <h2>Your Order Summary</h2>
+          
+              <ul class="list list_2">
+                <li>
+                  <a>SUBTOTAL
+                    <span style="margin-left: 80px;">₹<%=orderTotal%></span>
+                    <input type="hidden" id="totalAmount" value="100">
+                  </a>
+                </li>
+                <li>
+                  <a>COUPON AMOUNT
+                    <span id="couponDiscount" style="margin-left: 35px;"><%= orderDetails ? orderDetails.discountAmount : 'N/A' %></span>
+                  </a>
+                </li>
+                <br>
+                <li>
+                  <a>Total
+                    <span id="totals" style="margin-left: 80px;">₹<%=orderDetails.totalAmount%></span>
+                  </a>
+                </li>
+              </ul>
+              <% if (orderDetails.status === 'Delivered') { %>
+                <a id="downloadInvoiceBtn" class="download-invoice" href="/invoice/<%=orderDetails._id%>">Download Invoice</a>
+            <% } %>
+            
+
+              
+            </div>
           </div>
-        </div>
         
         
        

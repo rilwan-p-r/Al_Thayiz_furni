@@ -8083,4 +8083,121 @@ transition: .3s ease all;
   }
 }
 
-/*--------- edit address css ------*/
+/*--------- sort option ------*/
+.price-options {
+  display: flex;
+  flex-direction: column; /* Display options vertically */
+  align-items: flex-start; /* Align options to the start of the container */
+  margin-top: 10px;
+}
+
+.price-option {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 5px; /* Adjust margin between options as needed */
+}
+
+.price-option.active {
+  background-color: #007bff;
+  color: #fff;
+}
+.selected {
+  background-color: #007bff; /* Modern blue color */
+  color: white; /* Text color to ensure readability */
+}
+
+/* ---------invoice button------------ */
+#addressModal {
+  z-index: 1001; /* Ensure the modal appears above other elements */
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 400px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.coupon-input-container {
+  margin-bottom: 20px;
+}
+
+.coupon-input {
+  width: calc(100% - 40px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.apply-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px; /* Add margin to create space between input and button */
+}
+
+.apply-button:hover {
+  background-color: #0056b3;
+}
+
+.apply-button:disabled {
+  background-color: #b8b8b8;
+  cursor: not-allowed;
+}
+
+
+/* -----------brand filteringgg-------------- */
+
+.brands-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.brands-list li {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+  
+
+
+
+
+
+
+

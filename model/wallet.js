@@ -29,13 +29,9 @@ const walletSchema = new mongoose.Schema({
             type: Date,
             default: Date.now,
             get: function(value) {
-                const date = new Date(value);
-                const month = date.getMonth() + 1; // Months are zero-based, so add 1
-                const day = date.getDate();
-                const year = date.getFullYear();
-                return `${month}/${day}/${year}`;
+                return new Date(value).toLocaleDateString('en-US');
             }
-        }
+        }        
     }]
 });
 

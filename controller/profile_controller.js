@@ -2,6 +2,9 @@ const usersDb=require("../model/users")
 const Order = require("../model/ordersList")
 const Product = require("../model/product")
 const Wallet = require("../model/wallet")
+const puppeteer = require('puppeteer');
+const path = require('path');
+const ejs = require('ejs');
 
 const loadUserProfile = async(req,res)=>{
     try{
@@ -62,7 +65,6 @@ const viewProducts = async(req,res)=>{
     try{
         const userId = req.session.userId
         const user = await usersDb.findOne({_id:userId})
-
         const orderId = req.params.orderId;
         const orderDetails = await Order.findOne({ _id: orderId });
         res.render("userSide/viewProducts",{user, orderDetails})
@@ -75,18 +77,39 @@ const viewProducts = async(req,res)=>{
 const cancelOrder = async (req, res) => {
     try {
       const orderId = req.params.orderId;
+      console.log("orderId:", orderId); // Log orderId to ensure it's correct
       const order = await Order.findById(orderId);
       if (!order) {
         return res.status(404).json({ error: 'Order not found' });
       }
-      //order and restoc
+      if (order.paymentMethod === 'RAZORPAY' || order.paymentMethod === 'Wallet') {
+        console.log("Order payment method:", order.paymentMethod); // Log payment method to ensure it's correct
+        
+        const wallet = await Wallet.findOne({ user: order.userId });
+        if (!wallet) {
+          return res.status(404).json({ error: 'Wallet not found for the user' });
+        }
+  
+        console.log("Wallet found:", wallet); // Log wallet details
+        wallet.balance += order.totalAmount;
+        wallet.transactions.push({
+          orderId: orderId,
+          type: 'credit',
+          amount: order.totalAmount,
+          date: new Date()
+        });
+  
+        console.log("Updated wallet:", wallet); // Log updated wallet details
+        await wallet.save();
+      }
+  
       for (const product of order.products) {
         await Product.updateOne(
           { _id: product.productId },
           { $inc: { quantity: product.quantity } }
         );
       }
-
+  
       const result = await Order.deleteOne({ _id: orderId });
       if (result.deletedCount === 1) {
         res.status(200).json({ message: 'Order canceled successfully' });
@@ -98,6 +121,7 @@ const cancelOrder = async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   };
+  
 
   const loadAddressManage = async(req,res)=>{
     try{
@@ -319,6 +343,39 @@ const loadWallet = async(req,res)=>{
     }
 }
 
+const loadInvoice = async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        console.log("vckac akldqhj dqc:",orderId);
+        const orderDetails = await Order.findOne({ _id: orderId });
+        console.log("hbcalhvca:",orderDetails);
+
+        // Check if orderDetails is null
+        if (!orderDetails) {
+            return res.status(404).send("Order not found");
+        }
+
+        // Render the EJS template with data
+        const ejsTemplate = path.resolve(__dirname, '../views/userSide/invoice.ejs');
+        const ejsData = await ejs.renderFile(ejsTemplate, { orderDetails });
+
+        // Launch Puppeteer and generate PDF
+        const browser = await puppeteer.launch({ headless: true });
+        const page = await browser.newPage();
+        await page.setContent(ejsData, { waitUntil: 'networkidle0' });
+        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+
+        await browser.close();
+
+        // Set the content type and send the PDF as response
+        res.contentType('application/pdf');
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
 module.exports = {
     loadUserProfile,
     loadOrderDetails,
@@ -335,5 +392,6 @@ module.exports = {
     cancelReturn,
     loadChangePassword,
     changePassword,
-    loadWallet
+    loadWallet,
+    loadInvoice
 }
