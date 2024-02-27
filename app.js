@@ -25,5 +25,6 @@ app.use("/admin",adminRoutes)
 
 // ---------------port nummber
 app.listen(process.env.PORT,()=>{
+    
     console.log("server is running on 3000");
 })
