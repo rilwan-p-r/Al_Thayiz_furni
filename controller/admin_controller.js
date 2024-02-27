@@ -305,14 +305,14 @@ console.log("Category Counts:", categoryCounts);
 const addProduct = async (req, res) => {
     try {
         const productId = req.params?.productId;
-        const { product_name, description, price, quantity, editMode, category: categoryId } = req.body;
+        const { product_name, description, price, quantity, editMode, category: categoryId ,brand} = req.body;
 
         if (req.session.isLogged) {
             const categories = await category.find();
 
             if (editMode === 'true') {
                 // Update existing product
-                await Product.findByIdAndUpdate(productId, { product_name, description, price, quantity });
+                await Product.findByIdAndUpdate(productId, { product_name, description, price, quantity, brand });
             } else {
                 let productImages = [];
 
@@ -338,6 +338,7 @@ const addProduct = async (req, res) => {
                     category: categoryId,
                     categoryName: categoryName,
                     productImages: productImages,
+                    brand: brand
                 });
 
                 await newProduct.save();

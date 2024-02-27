@@ -5,6 +5,9 @@ const Wallet = require("../model/wallet")
 const puppeteer = require('puppeteer');
 const path = require('path');
 const ejs = require('ejs');
+const fs = require('fs');
+const util = require('util')
+const readFile = util.promisify(fs.readFile); 
 
 const loadUserProfile = async(req,res)=>{
     try{
@@ -346,9 +349,11 @@ const loadWallet = async(req,res)=>{
 const loadInvoice = async (req, res) => {
     try {
         const orderId = req.params.orderId;
-        console.log("vckac akldqhj dqc:",orderId);
+        console.log("Order ID:", orderId);
+
+        // Fetch order details from the database
         const orderDetails = await Order.findOne({ _id: orderId });
-        console.log("hbcalhvca:",orderDetails);
+        console.log("Order Details:", orderDetails);
 
         // Check if orderDetails is null
         if (!orderDetails) {
@@ -359,12 +364,21 @@ const loadInvoice = async (req, res) => {
         const ejsTemplate = path.resolve(__dirname, '../views/userSide/invoice.ejs');
         const ejsData = await ejs.renderFile(ejsTemplate, { orderDetails });
 
+        // Read CSS file content
+        const cssContent = await readFile(path.resolve(__dirname, '../asset/css/invoice.css'), 'utf8');
+
+        // Inject CSS into HTML template
+        const htmlWithCss = ejsData.replace('</head>', `<style>${cssContent}</style></head>`);
+
         // Launch Puppeteer and generate PDF
         const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
-        await page.setContent(ejsData, { waitUntil: 'networkidle0' });
-        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
 
+        // Wait for the page to load completely
+        await page.goto('about:blank');
+        await page.setContent(htmlWithCss, { waitUntil: 'networkidle0' });
+
+        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
         await browser.close();
 
         // Set the content type and send the PDF as response
