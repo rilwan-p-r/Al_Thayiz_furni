@@ -34,6 +34,6 @@
     "razorpay": "^2.9.2",
     "sharp": "^0.33.2",
     "speakeasy": "^2.0.0",
-    "sweetalert2": "^11.10.4"
+    "sweetalert2": "^11.6.13"
   }
 }

@@ -70,77 +70,78 @@ res.render("userSide/signUp")
 
 //create new users-----------
 const usersInsertDb=async(req,res)=>{
-    try{
-        console.log(req.body);
-        let errorMessage = "";
-        if (!passwordValidator.test(req.body.password)){
-            errorMessage = "Password must be strong";
-            // return res.render("register",{message:"password must be strong"})
-        } // Return to prevent further execution
-        if(!firstNameValidator.test(req.body.name.trim())){
-            errorMessage = "Name must start with uppercase";
-            // return res.render("register",{message:"Name must be start wirh uppercase"})
-        }
-        else if(!mobileNumberValidator.test(req.body.mobile.trim())){
-            errorMessage = "Mobile number must be valid";
-            // return res.render("register",{message:"Name must be start wirh uppercase"})
-        }
-        else if(!emailValidator.test(req.body.email)){
-          errorMessage="enter valid email id"
-            // return res.render("register",{message:"please enter email id properly"})
-        }
-        if (errorMessage.length>0) {
-            req.flash("error", errorMessage);
-            return res.redirect("/register");    
-        }
+  try{
+      console.log(req.body);
+      let errorMessage = "";
+      if (!passwordValidator.test(req.body.password)){
+          errorMessage = "Password must be strong";
+          // return res.render("register",{message:"password must be strong"})
+      } // Return to prevent further execution
+      if(!firstNameValidator.test(req.body.name.trim())){
+          errorMessage = "Name must start with uppercase";
+          // return res.render("register",{message:"Name must be start wirh uppercase"})
+      }
+      else if(!mobileNumberValidator.test(req.body.mobile.trim())){
+          errorMessage = "Mobile number must be valid";
+          // return res.render("register",{message:"Name must be start wirh uppercase"})
+      }
+      else if(!emailValidator.test(req.body.email)){
+        errorMessage="enter valid email id"
+          // return res.render("register",{message:"please enter email id properly"})
+      }
+      if (errorMessage.length>0) {
+          req.flash("error", errorMessage);
+          return res.redirect("/register");    
+      }
 
-        
+      
 
-        const hashedpassword = bcrypt.hashSync(req.body.password, 10)
-        const usersdata=new usersDb({
-            name:req.body.name,
-            email:req.body.email,
-            mobile:req.body.mobile,
-            password:hashedpassword
-        })
-        console.log(usersdata);
+      const hashedpassword = bcrypt.hashSync(req.body.password, 10)
+      const usersdata=new usersDb({
+          name:req.body.name,
+          email:req.body.email,
+          mobile:req.body.mobile,
+          password:hashedpassword
+      })
+      console.log(usersdata);
 
-        await usersdata.save()
-        // Generate OTP
-        // const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
-        // console.log(otp);
-        // otp generating----
-       
-      const numericOtp = await generateNumericOtp(5);
-      console.log(numericOtp);
-        const hashedOtp = await bcrypt.hash(numericOtp, 10);
-        console.log(hashedOtp);
-         // Save the hashed OTP to the OTP collection
-         const otpDatas = new otpModel({
-            email: req.body.email,
-            otp: hashedOtp,
-        });
-        await otpDatas.save();
-        
-        // Render a page to enter the OTP
-        res.redirect(`/verify-otp?email=${req.body.email}`)
-        // Send OTP via email
-        await sendOtpEmail(req.body.email, numericOtp);
-        console.log("page render to otp page");
-    }
-    catch(error){
-        if (error.code === 11000) {
-            console.error('Email must be unique:', error.message);
-            req.flash("error", "Email must be unique");
-            // Handle the error as needed
-            res.redirect("/register")
-          } else {
-            console.error('Unexpected error:', error.message);
-            req.flash("error", "Unexpected error occurred");
-            // Handle other errors
-          }
-    }
+      await usersdata.save()
+      // Generate OTP
+      // const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
+      // console.log(otp);
+      // otp generating----
+     
+    const numericOtp = await generateNumericOtp(5);
+    console.log(numericOtp);
+      const hashedOtp = await bcrypt.hash(numericOtp, 10);
+      console.log(hashedOtp);
+       // Save the hashed OTP to the OTP collection
+       const otpDatas = new otpModel({
+          email: req.body.email,
+          otp: hashedOtp,
+      });
+      await otpDatas.save();
+      
+      // Render a page to enter the OTP
+      res.redirect(`/verify-otp?email=${req.body.email}`)
+      // Send OTP via email
+      await sendOtpEmail(req.body.email, numericOtp);
+      console.log("page render to otp page");
+  }
+  catch(error){
+      if (error.code === 11000) {
+          console.error('Email must be unique:', error.message);
+          req.flash("error", "Email must be unique");
+          // Handle the error as needed
+          res.redirect("/register")
+        } else {
+          console.error('Unexpected error:', error.message);
+          req.flash("error", "Unexpected error occurred");
+          // Handle other errors
+        }
+  }
 }
+
 function generateNumericOtp(length) {
   const digits = '0123456789';
   let otp = '';
@@ -212,67 +213,64 @@ const matchingOtp = async(req,res)=>{
 
 // verifylogin---------------
 const verifylogin = async(req,res)=>{
-    try{
-        let loginError=""
-        const { email, password } = req.body;
+  try{
+      let loginError=""
+      const { email, password } = req.body;
 
-        console.log('iambody',req.body);
-    // Find the user by email
-    const user = await usersDb.findOne({ email });
-  console.log('iamuser',user);
-    // Check if the user exists
-    if (!user) {
-      loginError="invalid email id"  
+      console.log('iambody',req.body);
+  // Find the user by email
+  const user = await usersDb.findOne({ email });
+console.log('iamuser',user);
+  // Check if the user exists
+  if (!user) {
+    loginError="invalid email id"  
 }
 if(loginError){
-    req.flash("error", loginError);
-   return res.redirect("/login")
+  req.flash("error", loginError);
+ return res.redirect("/login")
 }
 
 // check user verified true or false
 
 // Compare the entered password with the hashed password
-const passwordMatch = await bcrypt.compare(password, user.password);
+const passwordMatch = await bcrypt.compare(req.body.password, user.password);
 
 console.log('paswordma',passwordMatch);
 // Check if the password is correct
 if (!passwordMatch) {
-  
-  loginError="enter valid password"
+
+loginError="enter valid password"
 }
 
 if(loginError){
-    req.flash("error", loginError);
-   return res.redirect("/login")
+  req.flash("error", loginError);
+ return res.redirect("/login")
 }
-if (user.isBlocked) {
-  loginError = "Your account is blocked. Please contact support.";
-}
-
 if(!user.isVerified){
-    loginError="account has not varified please enter otp"
+  loginError="account has not varified please enter otp"
 }
 if(loginError){
-    req.flash("error",loginError)
-    return res.redirect("/login")
+  req.flash("error",loginError)
+  return res.redirect("/login")
 }
 
 if(passwordMatch){
-  req.session.userId=user._id
-    //change the browser history
-    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-    res.setHeader("refresh", "0;url=/");
-  
-  res.redirect("/");
+req.session.userId=user._id
+  //change the browser history
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  res.setHeader("refresh", "0;url=/");
+
+res.redirect("/");
 }
+  }
+  catch(error){
+      console.error(error);
+      res.status(500).send('Internal Server Error');
     }
-    catch(error){
-        console.error(error);
-        res.status(500).send('Internal Server Error');
-      }
-    }
+  }
+
 // userLogout-------------------
 const userLogOut = async(req,res)=>{
   try{
