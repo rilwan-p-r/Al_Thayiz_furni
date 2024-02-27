@@ -30,7 +30,7 @@ const profileController=require("../controller/profile_controller")
 
 
 // ------------routes
-userRoutes.get("/",isAuth.isUserLogin,userController.loadHome)
+userRoutes.get("/",userController.loadHome)
 // userRoutes.get("/login",userController.loadLogin)
 userRoutes.get("/login", (req, res, next) => {
     if (req.session.userId) {
@@ -48,8 +48,8 @@ userRoutes.get("/logout",isAuth.isUserLogin,userController.userLogOut)
 userRoutes.get("/verify-otp",userController.matchingOtp)
 userRoutes.post("/verify-otp", userController.verifyOtp)
 // shopCategory Routes
-userRoutes.get("/loadShop",isAuth.isUserLogin,userController.loadShop)
-userRoutes.get('/product/:id',isAuth.isUserLogin,userController.loadProductPage)
+userRoutes.get("/loadShop",userController.loadShop)
+userRoutes.get('/product/:id',userController.loadProductPage)
 userRoutes.get('/cart',isAuth.isUserLogin,cartController.loadCart)
 userRoutes.post('/addToCart',isAuth.isUserLogin, cartController.addToCart)
 userRoutes.post('/change-product-quantity',cartController.quantityUpdate)
