@@ -96,12 +96,12 @@ const usersInsertDb=async(req,res)=>{
 
       
 
-      const hashedpassword = bcrypt.hashSync(req.body.password, 10)
+      // const hashedpassword = bcrypt.hashSync(req.body.password, 10)
       const usersdata=new usersDb({
           name:req.body.name,
           email:req.body.email,
           mobile:req.body.mobile,
-          password:hashedpassword
+          password:req.body.password
       })
       console.log(usersdata);
 
@@ -233,7 +233,7 @@ if(loginError){
 // check user verified true or false
 
 // Compare the entered password with the hashed password
-const passwordMatch = await bcrypt.compare(req.body.password, user.password);
+const passwordMatch = await user.comparePassword(password);
 
 console.log('paswordma',passwordMatch);
 // Check if the password is correct
