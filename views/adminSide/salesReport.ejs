@@ -37,13 +37,13 @@
                         <% sales.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate)).forEach(sale => { %>
                             <tr>
                                 <td style="color: green;"><%= sale._id %></td>
-                                <td><%= sale.userId.name %></td>
+                                <td><%= sale.userId ? sale.userId.name : "Unknown" %></td>
                                 <td><%= sale.paymentMethod %></td>
                                 <td><%= sale.orderDate ? moment(sale.orderDate).format('MM/DD/YYYY') : "" %></td>
                                 <td><%= sale.totalAmount %></td>
                             </tr>
-                            <% }); %>   
-                        
+                        <% }); %>
+                         
                            
                     </tbody>
                 </table>
