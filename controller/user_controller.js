@@ -527,31 +527,35 @@ const loadVerifyOtpForget = async(req,res)=>{
 
 const verifyOtpForget = async (req, res) => {
   try {
+      const user = req.body.email;
+      const enteredOtp = req.body.otp;
+      const otpDatas = await otpModel.findOne({ email: req.body.email });
 
-    const user =  req.body.email
-    const enteredOtp = req.body.otp;
-    const otpDatas = await otpModel.findOne({ email: req.body.email })
-    if (!otpDatas) {
-      console.log("otp is not here server!!!");
-    
-  }
+      if (!otpDatas) {
+          return res.status(400).json({ error: 'OTP not found' });
+      }
+      const isMatch = await bcrypt.compare(enteredOtp.toString(), otpDatas.otp);
+      if (!isMatch) {
+          return res.status(400).json({ error: 'Invalid OTP' });
+      }
 
-    // Compare the provided OTP with the hashed OTP
-    const isMatch = await bcrypt.compare(enteredOtp.toString(), otpDatas.otp);
-    if (!isMatch) {
-      return res.status(400).json({ error: 'Invalid OTP' });
-    }
-
-    // If OTP is valid, delete it from the OTP collection
-    await otpModel.deleteOne({ email: user });
-
-    // Proceed with password reset or other actions
-    res.render("userSide/createNewPass",{user});
+      await otpModel.deleteOne({ email: user });
+      return res.status(200).json({ success: true, email: user });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+      console.error(error);
+      return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+const loadCreateNewPass = async(req,res)=>{
+  try{
+    const { email } = req.query;
+    res.render("userSide/createNewPass", { email });
+  }
+  catch(error){
+    console.log(error);
+  }
+}
 
 const createNewPass = async(req,res)=>{
   try{
@@ -606,6 +610,7 @@ module.exports={
   forgetPass,
   loadVerifyOtpForget,
   verifyOtpForget,
+  loadCreateNewPass,
   createNewPass
   }
 

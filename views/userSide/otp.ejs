@@ -128,6 +128,42 @@ button:hover {
             </form>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const otpForm = document.getElementById('otp-form');
+    
+            otpForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+    
+                const formData = new FormData(otpForm);
+                const email = formData.get('email');
+                const otp = formData.get('otp');
+    
+                try {
+                    const response = await fetch('/verifyForget', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, otp })
+                    });
+    
+                    const data = await response.json();
+    
+                    if (response.ok) {
+                        // Redirect or do something on success
+                        window.location.href = `/createNewPass?email=${data.email}`;
+                    } else {
+                        // Display error message
+                        alert(data.error);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again later.');
+                }
+            });
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="js/jquery-1.12.1.min.js"></script>
     <!-- popper js -->

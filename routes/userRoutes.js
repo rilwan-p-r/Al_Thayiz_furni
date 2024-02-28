@@ -85,6 +85,7 @@ userRoutes.get("/forgetPass",userController.loadForgetPass)
 userRoutes.post("/forgetPass",userController.forgetPass)
 userRoutes.get("/verifyForget",userController.loadVerifyOtpForget)
 userRoutes.post("/verifyForget",userController.verifyOtpForget)
+userRoutes.get("/createNewPass",userController.loadCreateNewPass)
 userRoutes.post("/createNewPass",userController.createNewPass)
 
 module.exports=userRoutes

@@ -76,7 +76,7 @@
                 <form id="passwordChangeForm" action="/createNewPass" method="POST">
                     <label for="currentPassword">Current Password</label>
                     <div class="form-group pass_show"> 
-                        <input type="hidden" name="email" value="<%= user %>">
+                        <input type="hidden" name="email" value="<%= email %>">
                         <input type="password" id="currentPassword" name="currentPassword" class="form-control" placeholder="Current Password"> 
                     </div> 
                     <label for="newPassword">New Password</label>
@@ -93,7 +93,42 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordChangeForm = document.getElementById('passwordChangeForm');
 
+        passwordChangeForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(passwordChangeForm);
+            const email = formData.get('email');
+            const currentPassword = formData.get('currentPassword');
+            const newPassword = formData.get('newPassword');
+            const confirmPassword = formData.get('confirmPassword');
+
+            try {
+                const response = await fetch('/createNewPass', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, currentPassword, newPassword, confirmPassword })
+                });
+
+                if (response.ok) {
+                    // Redirect to login page or do something else on success
+                    window.location.href = '/login';
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        });
+    });
+</script>
 <script src="js/jquery-1.12.1.min.js"></script>
 <!-- popper js -->
 <script src="js/popper.min.js"></script>
