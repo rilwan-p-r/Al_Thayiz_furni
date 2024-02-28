@@ -81,5 +81,10 @@ userRoutes.get("/wallet",isAuth.isUserLogin,profileController.loadWallet)
 userRoutes.get('/search', userController.searchProducts);
 userRoutes.get('/sort', userController.sort);
 userRoutes.get("/invoice/:orderId",isAuth.isUserLogin,profileController.loadInvoice)
+userRoutes.get("/forgetPass",userController.loadForgetPass)
+userRoutes.post("/forgetPass",userController.forgetPass)
+userRoutes.get("/verifyForget",userController.loadVerifyOtpForget)
+userRoutes.post("/verifyForget",userController.verifyOtpForget)
+userRoutes.post("/createNewPass",userController.createNewPass)
 
 module.exports=userRoutes

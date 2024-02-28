@@ -448,6 +448,143 @@ const sort = async (req, res) => {
   }
 };
 
+const loadForgetPass = async(req,res)=>{
+  try{
+    res.render("userSide/forgetPass")
+  }
+  catch(error){
+    console.log(error);
+  }
+}
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'alarnoz39@gmail.com',
+    pass: 'zykx udai pasm kxir' 
+    }
+});
+const sendOTPByEmail = async (email, otp) => {
+  try {
+    const info = await transporter.sendMail({
+      from: 'your_email@gmail.com',
+      to: email,
+      subject: 'Your OTP for Password Reset',
+      text: `Your OTP for password reset is: ${otp}`
+    });
+
+    console.log('Email sent:', info.response);
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+};
+
+
+const forgetPass = async (req, res) => {
+  try {
+    const { email } = req.body;
+    console.log("eeeeeeeeeeeeeeeee",{email});
+    const otpRecord = await otpModel.findOne({ email: req.body.email })
+    // Proceed with generating OTP and sending email
+    let otpValue;
+
+    // If an OTP document exists
+    if (otpRecord) {
+      otpValue = Math.floor(100000 + Math.random() * 900000);
+      const hashedOTP = await bcrypt.hash(otpValue.toString(), 10);
+      otpRecord.otp = hashedOTP;
+      await otpRecord.save();
+    } else {
+      // Generate a new OTP and save
+      otpValue = Math.floor(100000 + Math.random() * 900000); 
+      const hashedOTP = await bcrypt.hash(otpValue.toString(), 10);
+      otpRecord = new otpModel({
+        email: email,
+        otp: hashedOTP
+      });
+      await otpRecord.save();
+    }
+    res.redirect(`/verifyForget?email=${req.body.email}`)
+
+    // Send OTP to the user's email
+    await sendOTPByEmail(email, otpValue);
+    
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const loadVerifyOtpForget = async(req,res)=>{
+  try{
+    const email= req.query.email
+    res.render("userSide/otp",{email})
+  }
+  catch(error){
+    console.log(error);
+  }
+}
+
+const verifyOtpForget = async (req, res) => {
+  try {
+
+    const user =  req.body.email
+    const enteredOtp = req.body.otp;
+    const otpDatas = await otpModel.findOne({ email: req.body.email })
+    if (!otpDatas) {
+      console.log("otp is not here server!!!");
+    
+  }
+
+    // Compare the provided OTP with the hashed OTP
+    const isMatch = await bcrypt.compare(enteredOtp.toString(), otpDatas.otp);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Invalid OTP' });
+    }
+
+    // If OTP is valid, delete it from the OTP collection
+    await otpModel.deleteOne({ otpDatas });
+
+    // Proceed with password reset or other actions
+    res.render("userSide/createNewPass",{user});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const createNewPass = async(req,res)=>{
+  try{
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const email = req.body.email
+    console.log('change pass::::',email);
+    const user = await usersDb.findOne({ email: email });
+    console.log("userrrrrrrrrrrrrr",user);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+  }
+  const isPasswordValid = await user.comparePassword(currentPassword);
+  if (!isPasswordValid) {
+      return res.status(400).json({ error: "Current password is incorrect" });
+  }
+  // Check if the new password meets your criteria
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: "Password must be at least 6 characters long" });
+}
+if (newPassword !== confirmPassword) {
+    return res.status(400).json({ error: "New password and confirm password do not match" });
+}
+// Update the password
+user.password = newPassword;
+await user.save();
+res.redirect("/login");
+
+  }
+  catch(error){
+    console.log(error);
+    res.status(400).json({ error: error.message });
+  }
+}
 
 // exportssss--------------------
 module.exports={
@@ -464,6 +601,11 @@ module.exports={
   resendOTP,
   deleteotp,
   searchProducts,
-  sort
+  sort,
+  loadForgetPass,
+  forgetPass,
+  loadVerifyOtpForget,
+  verifyOtpForget,
+  createNewPass
   }
 

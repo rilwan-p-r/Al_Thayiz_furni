@@ -292,7 +292,9 @@ const cancelReturn = async (req, res) => {
 
 const loadChangePassword = async(req,res)=>{
     try{
-        res.render("userSide/changePassword")
+        const userId = req.session.userId;
+        const user = await usersDb.findById(userId);
+        res.render("userSide/changePassword",{user})
     }
     catch(error){
         console.log(error);
@@ -337,9 +339,10 @@ const changePassword = async(req,res)=>{
 
 const loadWallet = async(req,res)=>{
     try{
-        userId = req.session.userId
+        const userId = req.session.userId
+        const user = await usersDb.findById(userId);
         const wallet = await Wallet.findOne({ user: userId })
-        res.render("userSide/wallet", { wallet });
+        res.render("userSide/wallet", { wallet,user });
     }
     catch(error){
         console.log(error);
