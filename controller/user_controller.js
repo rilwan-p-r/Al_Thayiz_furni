@@ -482,10 +482,11 @@ const sendOTPByEmail = async (email, otp) => {
 const forgetPass = async (req, res) => {
   try {
     const { email } = req.body;
-    console.log("eeeeeeeeeeeeeeeee",{email});
-    const otpRecord = await otpModel.findOne({ email: req.body.email })
+    console.log("eeeeeeeeeeeeeeeee", { email });
+    let otpRecord = await otpModel.findOne({ email: req.body.email }); // Change const to let
     // Proceed with generating OTP and sending email
-    let otpValue;
+    
+    let otpValue; // Define otpValue here
 
     // If an OTP document exists
     if (otpRecord) {
@@ -495,7 +496,7 @@ const forgetPass = async (req, res) => {
       await otpRecord.save();
     } else {
       // Generate a new OTP and save
-      otpValue = Math.floor(100000 + Math.random() * 900000); 
+      otpValue = Math.floor(100000 + Math.random() * 900000);
       const hashedOTP = await bcrypt.hash(otpValue.toString(), 10);
       otpRecord = new otpModel({
         email: email,
@@ -503,17 +504,16 @@ const forgetPass = async (req, res) => {
       });
       await otpRecord.save();
     }
-    res.redirect(`/verifyForget?email=${req.body.email}`)
+    res.redirect(`/verifyForget?email=${req.body.email}`);
 
     // Send OTP to the user's email
     await sendOTPByEmail(email, otpValue);
-    
-    
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 const loadVerifyOtpForget = async(req,res)=>{
   try{
@@ -543,7 +543,7 @@ const verifyOtpForget = async (req, res) => {
     }
 
     // If OTP is valid, delete it from the OTP collection
-    await otpModel.deleteOne({ otpDatas });
+    await otpModel.deleteOne({ email: user });
 
     // Proceed with password reset or other actions
     res.render("userSide/createNewPass",{user});
