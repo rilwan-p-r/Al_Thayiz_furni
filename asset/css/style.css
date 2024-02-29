@@ -3421,9 +3421,9 @@ ul {
 }
 
 /* line 184, ../../01 cl html template/03_jun 2019/188_Aranoz shop_html/sass/_product.scss */
-.left_sidebar_area .widgets_inner ul li:hover {
+/* .left_sidebar_area .widgets_inner ul li:hover {
   color: #ff3368;
-}
+} */
 
 /* line 185, ../../01 cl html template/03_jun 2019/188_Aranoz shop_html/sass/_product.scss */
 .left_sidebar_area .widgets_inner ul li:hover a {
@@ -8084,10 +8084,11 @@ transition: .3s ease all;
 }
 
 /*--------- sort option ------*/
+
 .price-options {
   display: flex;
   flex-direction: column; /* Display options vertically */
-  align-items: flex-start; /* Align options to the start of the container */
+  align-items: left; /* Align options to the start of the container */
   margin-top: 10px;
 }
 
@@ -8182,17 +8183,83 @@ transition: .3s ease all;
 }
 
 
-/* -----------brand filteringgg-------------- */
+/* -----------multiple category searching-------------- */
 
-.brands-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* Style the dropdown button */
+.dropbtn {
+  background-color: #fff;
+  color: black;
+  font-size: 16px;
+  border: none;
 }
-.brands-list li {
-  margin-top: 0;
-  margin-bottom: 0;
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
 }
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content label {
+  padding: 12px 16px;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content label:hover {
+  background-color: #ddd;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+  background-color: #ddd;
+}
+/* ----------apply button------------ */
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 0.7;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+
   
 
 

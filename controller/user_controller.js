@@ -283,67 +283,75 @@ const userLogOut = async(req,res)=>{
   }
 }
 // loadShopsPage
-const loadShop = async (req, res) => {
+const loadShop = async (req, res) => { 
   try {
-    const userId = req.session.userId;
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 6;
+      const userId = req.session.userId;
+      const page = parseInt(req.query.page) || 1;
+      const perPage = 6;
 
-    const selectedCategoryId = req.query.category || null;
-    const selectedBrand = req.query.brand || null;
-    const allCategories = await Category.find();
+      const selectedCategoryId = req.query.category || null;
 
-    // Compute product count for each category
-    const categoryProductCounts = await Promise.all(
-      allCategories.map(async (category) => {
-        const count = await Product.countDocuments({ category: category._id });
-        return { categoryId: category._id, count };
-      })
-    );
+      const selectedBrands = req.query.brands ? (Array.isArray(req.query.brands) ? req.query.brands : [req.query.brands]) : null;
+      console.log("selectedBrands:", selectedBrands);
 
-    let query = {};
-    if (selectedCategoryId) {
-      query.category = selectedCategoryId;
-    }
-    if (selectedBrand) {
-      query.brand = selectedBrand;
-    }
+      const allCategories = await Category.find();
 
-    const products = await Product.find(query)
-      .skip((page - 1) * perPage)
-      .limit(perPage)
-      .populate("category");
+      const categoryProductCounts = await Promise.all(
+          allCategories.map(async (category) => {
+              const count = await Product.countDocuments({ category: category._id });
+              return { categoryId: category._id, count };
+          })
+      );
 
-    // Retrieve brands related to each category
-    const brandsByCategory = {};
-    for (const category of allCategories) {
-      const brands = await Product.distinct("brand", { category: category._id });
-      brandsByCategory[category._id] = brands;
-    }
+      let query = {};
+      if (selectedCategoryId) {
+          query.category = selectedCategoryId;
+      }
+      if (selectedBrands) {
+          // Modify query to filter by multiple brands using $in operator
+          query.brand = { $in: selectedBrands };
+      }
 
-    const user = await usersDb.findOne({ _id: userId });
+      const totalProducts = await Product.countDocuments(query);
+      const totalPages = Math.ceil(totalProducts / perPage);
 
-    // Count the total number of products for pagination
-    const totalProducts = await Product.countDocuments();
-    const totalPages = Math.ceil(totalProducts / perPage);
+      const products = await Product.find(query)
+          .populate("category")
+          .skip((page - 1) * perPage)
+          .limit(perPage);
 
-    res.render("userSide/shopsCategory", {
-      user,
-      products,
-      currentPage: page,
-      totalPages,
-      allCategories,
-      selectedCategoryId,
-      selectedBrand,
-      categoryProductCounts,
-      brandsByCategory,
-      message: products.length === 0 ? "No products found." : null,
-    });
+      const brandsByCategory = {};
+      for (const category of allCategories) {
+          const brands = await Product.distinct("brand", { category: category._id });
+          brandsByCategory[category._id] = brands;
+      }
+
+      const user = await usersDb.findOne({ _id: userId });
+
+      res.render("userSide/shopsCategory", {
+          user,
+          products,
+          currentPage: page,
+          totalPages,
+          allCategories,
+          selectedCategoryId,
+          selectedBrands,
+          categoryProductCounts,
+          brandsByCategory,
+          message: products.length === 0 ? "No products found." : null,
+      });
   } catch (error) {
-    console.log("Error loading shops page:", error);
-    res.status(500).send("Internal Server Error");
+      console.log("Error loading shops page:", error);
+      res.status(500).send("Internal Server Error");
   }
 };
+
+
+
+
+
+
+
 
 
 

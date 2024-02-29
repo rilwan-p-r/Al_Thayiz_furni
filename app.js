@@ -2,7 +2,7 @@
 require("dotenv").config()
 // ------------------DB connection
 const mongoose=require("mongoose")
-mongoose.connect("mongodb+srv://rilwanpr:rTKW6GLzUPekRjoq@althayiz.f3nhgyj.mongodb.net/",{ useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb://127.0.0.1:27017/project_1",{ useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 db.once("open", () => {

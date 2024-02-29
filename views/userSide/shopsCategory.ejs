@@ -12,25 +12,47 @@
                                 <h3>Browse Categories</h3>
                             </div>
                             <div class="widgets_inner">
-                                <ul class="list">
-                                    <!-- Display all categories with links to filter by each category -->
-                                    <% for (const category of allCategories) { %>
-                                    <li>
-                                        <a href="/loadShop?category=<%= category._id %>" style="color: black;"><strong><%= category.name %></strong></a>
-                                        <!-- You can also display the number of products in each category -->
-                                        <span>(<%= categoryProductCounts.find(item => item.categoryId.toString() === category._id.toString()).count || 0 %>)</span>
-                                        <!-- Display brands related to the current category -->
-                                        
-                                    </li>
-                                    <ul class="brands-list">
-                                        <li style="color:grey;"><strong>Brands:</strong></li>
-                                        <% for (const brand of brandsByCategory[category._id] || []) { %>
-                                        <li><a href="/loadShop?category=<%= category._id %>&brand=<%= encodeURIComponent(brand) %>"><%= brand %></a></li>
+                                <form action="/loadShop" method="GET">
+                                    <ul class="list">
+                                        <!-- Display all categories with radio buttons to filter by each category -->
+                                        <% for (const category of allCategories) { %>
+                                            <li>
+                                                <input type="radio" name="category" id="<%= category._id %>" value="<%= category._id %>"
+                                                    <%= selectedCategoryId === category._id.toString() ? 'checked' : '' %>>
+                                                <label for="<%= category._id %>"><strong><%= category.name %></strong></label>
+                                                <!-- Dropdown to display brands related to the current category -->
+                                                <div class="dropdown">
+                                                    <button class="dropbtn"><i class="fa-solid fa-angle-down"></i></button>
+                                                    <div class="dropdown-content" id="dropdown-<%= category._id %>">
+                                                        <!-- Display brands related to the current category -->
+                                                        <ul class="brands-list">    
+                                                            <% for (const brand of brandsByCategory[category._id] || []) { %>
+                                                            <li>
+                                                                <input type="checkbox" name="brands" value="<%= brand %>"
+                                                                <% if (selectedBrands && selectedBrands.includes(brand) && selectedCategoryId === category._id.toString()) { %> checked <% } %>>
+                                                            <label><%= brand %></label>
+                                                            
+                                                        
+                                                            </li>
+                                                            <% } %>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
                                         <% } %>
+                                        
                                     </ul>
-                                    <% } %>
-                                </ul>
+                                    <div style="text-align: center;">
+                                        <button type="submit" class="btn btn-primary btn-lg">Apply Filters</button>
+                                      </div>
+                                      
+
+                                </form>
                             </div>
+                            
+                            
+                            
+                            
                             
                             
                             
@@ -38,15 +60,16 @@
 
                         <div class="l_w_title"> 
                          <h3>Sort Products</h3>
-                            </div>
+                            
                               <div class="price-slider">
                                 <span class="price-label">PRICE</span>
+                            </div>
                                 <div class="price-options">
-                                    <div class="price-option" data-min="0" data-max="999">₹0 - ₹999</div>
-                                    <div class="price-option" data-min="1000" data-max="1999">₹1000 - ₹1999</div>
-                                    <div class="price-option" data-min="2000" data-max="2999">₹2000 - ₹2999</div>
-                                    <div class="price-option" data-min="3000" data-max="3999">₹3000 - ₹3999</div>
-                                    <div class="price-option" data-min="4000" data-max="10000">₹4000+</div>
+                                    <div class="price-option" data-min="0" data-max="1000">₹0 - ₹1000</div>
+                                    <div class="price-option" data-min="1001" data-max="2000">₹1001 - ₹2000</div>
+                                    <div class="price-option" data-min="2001" data-max="3000">₹2001 - ₹3000</div>
+                                    <div class="price-option" data-min="3001" data-max="4000">₹3001 - ₹4000</div>
+                                    <div class="price-option" data-min="4001" data-max="10000">₹4001+</div>
                                 </div>
                             </div>  
                           </aside>
@@ -160,18 +183,7 @@
                         <h4>Newsletter</h4>
                         <p>Heaven fruitful doesn't over lesser in days. Appear creeping
                         </p>
-                        <!-- <div id="mc_embed_signup">
-                            <form target="_blank"
-                                action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
-                                method="get" class="subscribe_form relative mail_part">
-                                <input type="email" name="email" id="newsletter-form-email" placeholder="Email Address"
-                                    class="placeholder hide-on-focus" onfocus="this.placeholder = ''"
-                                    onblur="this.placeholder = ' Email Address '">
-                                <button type="submit" name="submit" id="newsletter-submit"
-                                    class="email_icon newsletter-submit button-contactForm">subscribe</button>
-                                <div class="mt-10 info"></div>
-                            </form>
-                        </div> -->
+                       
                     </div>
                 </div>
             </div>
@@ -366,17 +378,24 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 </script>
 
 
-<!-- <script>
-    function handleBrandSelection(selectElement) {
-        const selectedCategory = selectElement.parentNode.querySelector('a').getAttribute('href').split('=')[1];
-        const selectedBrand = selectElement.value;
-        let url = "/loadShop?category=" + selectedCategory;
-        if (selectedBrand !== "#") {
-            url += "&brand=" + selectedBrand;
+<script>
+   $(document).ready(function() {
+    // Toggle dropdown visibility when a category is selected
+    $('input[type=radio][name=category]').change(function() {
+        var categoryId = $(this).val();
+        $('.dropdown-content').hide(); // Hide all dropdowns
+        $('#dropdown-' + categoryId).show(); // Show dropdown for the selected category
+    });
+
+    // Close dropdowns when clicking outside of them
+    $(document).click(function(event) {
+        if (!$(event.target).closest('.dropdown').length) {
+            $('.dropdown-content').hide(); // Hide all dropdowns
         }
-        window.location.href = url;
-    }
-</script> -->
+    });
+});
+
+</script>
 
 
 
