@@ -27,18 +27,14 @@
                                                         <!-- Display brands related to the current category -->
                                                         <ul class="brands-list">    
                                                             <% for (const brand of brandsByCategory[category._id] || []) { %>
-                                                            <li>
-                                                                <input type="checkbox" name="brands" value="<%= brand %>"
-                                                                <% if (selectedBrands && selectedBrands.includes(brand) && selectedCategoryId === category._id.toString()) { %>
-                                                                    checked
-                                                                <% } %>>
-                                                            <label><%= brand %></label>
-                                                            
-                                                        
-                                                            </li>
+                                                                <li>
+                                                                    <input type="checkbox" name="brands" value="<%= brand %>" ${selectedBrands && selectedBrands.includes(brand) && selectedCategoryId === category._id.toString() ? 'checked' : ''}>
+                                                                    <label><%= brand %></label>
+                                                                </li>
                                                             <% } %>
                                                         </ul>
                                                     </div>
+                                                    
                                                 </div>
                                             </li>
                                         <% } %>
