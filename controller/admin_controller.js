@@ -465,16 +465,16 @@ const deleteImage = async (req, res) => {
 
         for (let i = 0; i < req.files.length; i++) {
             const uploadedImagePath = req.files[i].path;
-            const resizedImagePath = path.join(__dirname, '..', 'asset', 'uploads', 'resized', req.files[i].filename);
-
+            const resizedImagePath = path.join(__dirname, '..', 'asset', 'uploads', `resized_${req.files[i].filename}`);
+        
             // Resize the image using sharp
             await sharp(uploadedImagePath)
                 .resize(840, 840, { fit: 'fill' })
                 .toFile(resizedImagePath);
-
+        
             // Save the resized image path
-            productImages.push(req.files[i].filename)
-        }
+            productImages.push(`resized_${req.files[i].filename}`);
+        }        
 
      const proData =  await  Product.updateOne({_id:productId},{$set:{name:product_name,brand:brand,description:description,price:price,quantity:quantity,category:category,productImages:productImages}})
        

@@ -128,8 +128,9 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        const imageContainer = document.querySelector(`[src="/uploads/resized/${imagePath}"]`).parentElement;
+                        const imageContainer = document.querySelector(`[src="/uploads/${imagePath}"]`).parentElement;
                         imageContainer.remove();
+                        window.location.reload();
                     } else {
                         console.error('Image deletion failed:', data.message);
                     }
