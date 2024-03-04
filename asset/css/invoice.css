@@ -135,3 +135,22 @@
     padding: 8px 0;
     text-align: center;
   }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #b9b9b9;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #c5c5c5;
+  }
+  
+  th {
+    background-color: #afafaf;
+  }
+  

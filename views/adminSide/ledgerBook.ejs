@@ -1,0 +1,53 @@
+<%- include('../layouts/header.ejs') %>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+<h1 style="text-align: center; color: darkslategrey;">Ledger Book</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Income</th>
+            <th>Expenses</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% let totalIncome = 0; %>
+        <% let totalExpenses = 0; %>
+        <% orders.forEach(order => { %>
+        <tr <% if (order.status === 'Delivered') { %> style="background-color: lightgreen;" <% } else { %> style="background-color: salmon;" <% } %>>
+            <td><%= moment(order.orderDate).format('MMM D, YYYY') %></td>
+            <td><%= order.status %></td>
+            <% if (order.status === 'Delivered') { %>
+                <td><%= order.totalAmount %></td>
+                <td></td>
+                <% totalIncome += order.totalAmount; %>
+            <% } else if (order.status === 'Returned') { %>
+                <td></td>
+                <td>- <%= order.totalAmount %></td>
+                <% totalExpenses += order.totalAmount; %>
+            <% } %>
+        </tr>
+        <% }); %>
+    </tbody>
+</table>
+<h3 style="color: green;">Total Income: <%= totalIncome %></h3>
+<h3 style="color: red;">Total Expenses: <%= totalExpenses %></h3>
+<% let balance = totalIncome - totalExpenses; %>
+<h3>Revenue: <%= balance %></h3>
+
+
+</body>
+</html>

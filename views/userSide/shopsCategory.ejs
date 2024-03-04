@@ -90,9 +90,10 @@
                                         <div class="col-lg-4 col-sm-6">
                                             <a href="/product/<%= products[i]._id %>">
                                                 <div class="single_product_item">
-                                                    <img src="/uploads/resized/<%= products[i].productImages[0] %>" alt="<%= products[i].name %>">
+                                                    <img src="/uploads/<%= products[i].productImages[0] %>" alt="<%= products[i].name %>">
                                                     <div class="single_product_text">
                                                         <h4><%= products[i].name %></h4>
+                                                        <h4 style="color:darkslategrey;">Brand: <%= products[i].brand %></h4>
                                                         <h3>₹<%= products[i].price %></h3>
                                                         <%if(products[i].quantity<4){%>
                                                             <h3 style="color: red;">stock is less than 4 hurryUp!</h3>
@@ -291,9 +292,10 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                 <div class="col-lg-4 col-sm-6">
                     <a href="/product/${product._id}">
                         <div class="single_product_item">
-                            <img src="/uploads/resized/${product.productImages[0]}" alt="${product.name}">
+                            <img src="/uploads/${product.productImages[0]}" alt="${product.name}">
                             <div class="single_product_text">
                                 <h4>${product.name}</h4>
+                                <h4 style="color:darkslategrey;">Brand: ${product.brand}</h4>
                                 <h3>₹${product.price}</h3>
                                 ${product.quantity < 4 ? '<h3 style="color: red;">Stock is less than 4. Hurry up!</h3>' : ''}
                             </div>
@@ -361,9 +363,10 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                         <div class="col-lg-4 col-sm-6">
                             <a href="/product/${product._id}">
                                 <div class="single_product_item">
-                                    <img src="/uploads/resized/${product.productImages[0]}" alt="${product.name}">
+                                    <img src="/uploads/${product.productImages[0]}" alt="${product.name}">
                                     <div class="single_product_text">
                                         <h4>${product.name}</h4>
+                                        <h4 style="color:darkslategrey;">Brand: ${product.brand}</h4>
                                         <h3>₹${product.price}</h3>
                                     </div>
                                 </div>

@@ -59,7 +59,7 @@
                                         <input type="file" class="form-control" name="product_images" accept="image/*" multiple onchange="displaySelectedImages(this)" />
                                         <% for (let i = 0; i < product.productImages.length; i++) { %>
                                             <div class="image-container">
-                                                <img src="/uploads/resized/<%= product.productImages[i] %>" alt="Product Image" class="img-thumbnail" style="width: 50px; height: 50px;" >
+                                                <img src="/uploads/<%= product.productImages[i] %>" alt="Product Image" class="img-thumbnail" style="width: 50px; height: 50px;" >
                                                 <a href="#" onclick="deleteImage('<%= product.productImages[i] %>')">Delete</a>
                                             </div>
                                         <% } %>

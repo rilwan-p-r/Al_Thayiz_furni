@@ -42,7 +42,7 @@ module.exports = adminRoutes
 adminRoutes.get("/adminUsers",isAuth.isAdminAuth,adminController.loadUsers)
 adminRoutes.get("/blockUser/:id",isAuth.isAdminAuth,adminController.blockuser)
 adminRoutes.get("/addProduct",isAuth.isAdminAuth,adminController.loadAddProduct)
-adminRoutes.post("/addProduct",upload.array('product_images',4),adminController.addProduct)
+adminRoutes.post("/addProduct",upload.array('productImages', 4),adminController.addProduct)
 adminRoutes.get("/loadProductList",isAuth.isAdminAuth,adminController.loadProductList)
 adminRoutes.post("/changeProductStatus/:productId",adminController.changeProductStatus)
 adminRoutes.get("/listCategory",isAuth.isAdminAuth,adminController.listCategory)
@@ -65,3 +65,4 @@ adminRoutes.get("/editCoupons/:id",isAuth.isAdminAuth,adminController.loadEditCo
 adminRoutes.post("/editCoupons/:id",adminController.editCoupons);
 adminRoutes.get("/deleteCoupon/:id",adminController.deleteCoupon);
 adminRoutes.get("/loadSalesreport",isAuth.isAdminAuth,adminController.loadSalesreport)
+adminRoutes.get("/loadLedgerBook",isAuth.isAdminAuth,adminController.loadLedgerBook)

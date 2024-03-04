@@ -30,7 +30,7 @@
                                                 <td>
                                                     <% if (product.productImages && product.productImages.length > 0) { %>
                                                         <br>
-                                                        <img src="/uploads/resized/<%= product.productImages[0] %>" alt="Product Image" class="img-thumbnail" style="width: 100px; height: 100px;">
+                                                        <img src="/uploads/<%= product.productImages[0] %>" alt="Product Image" class="img-thumbnail" style="width: 100px; height: 100px;">
                                                     <% } %> <br><span><%= product.productName %></span>
                                                 </td>
                                                 <td>x<%= product.quantity %></td>

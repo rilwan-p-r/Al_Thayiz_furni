@@ -597,7 +597,6 @@ res.redirect("/login");
     res.status(400).json({ error: error.message });
   }
 }
-
 // exportssss--------------------
 module.exports={
   usersInsertDb,

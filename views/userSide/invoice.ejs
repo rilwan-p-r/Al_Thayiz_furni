@@ -44,10 +44,15 @@
                     <td class="total">₹<%= product.price * product.quantity %></td>
                 </tr>
             <% }); %>
-            <tr>
+            <!-- <tr>
                 <td colspan="3">SUBTOTAL</td>
                 <td class="total">₹<%= orderDetails.totalAmount %></td>
+            </tr> -->
+            <tr>
+              <td colspan="3">DISCOUNT</td>
+              <td class="total">₹<%= orderDetails.discountAmount %></td>
             </tr>
+           
             <!-- <tr>
                 <td colspan="3">Payment Method</td>
                 <td class="total"><%= orderDetails.paymentMethod %></td>

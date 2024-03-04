@@ -373,11 +373,11 @@ const loadInvoice = async (req, res) => {
         // Inject CSS into HTML template
         const htmlWithCss = ejsData.replace('</head>', `<style>${cssContent}</style></head>`);
 
-        // Launch Puppeteer and generate PDF
+
         const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
 
-        // Wait for the page to load completely
+        
         await page.goto('about:blank');
         await page.setContent(htmlWithCss, { waitUntil: 'networkidle0' });
 
