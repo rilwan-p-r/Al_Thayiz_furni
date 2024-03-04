@@ -29,7 +29,9 @@
                                                             <% for (const brand of brandsByCategory[category._id] || []) { %>
                                                             <li>
                                                                 <input type="checkbox" name="brands" value="<%= brand %>"
-                                                                <% if (selectedBrands && selectedBrands.includes(brand) && selectedCategoryId === category._id.toString()) { %> checked <% } %>>
+                                                                <% if (selectedBrands && selectedBrands.includes(brand) && selectedCategoryId === category._id.toString()) { %>
+                                                                    checked
+                                                                <% } %>>
                                                             <label><%= brand %></label>
                                                             
                                                         

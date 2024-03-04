@@ -335,6 +335,7 @@ const loadShop = async (req, res) => {
           totalPages,
           allCategories,
           selectedCategoryId,
+          selectedBrands:
           selectedBrands,
           categoryProductCounts,
           brandsByCategory,
