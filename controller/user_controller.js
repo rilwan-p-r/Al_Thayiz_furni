@@ -559,6 +559,8 @@ const verifyOtpForget = async (req, res) => {
 const loadCreateNewPass = async(req,res)=>{
   try{
     const { email } = req.query;
+    console.log('langindpageforget',email);
+    
     res.render("userSide/createNewPass", { email });
   }
   catch(error){
@@ -568,19 +570,13 @@ const loadCreateNewPass = async(req,res)=>{
 
 const createNewPass = async(req,res)=>{
   try{
-    const { currentPassword, newPassword, confirmPassword } = req.body;
-    const email = req.body.email
+    const { newPassword, confirmPassword,email } = req.body;
     console.log('change pass::::',email);
     const user = await usersDb.findOne({ email: email });
     console.log("userrrrrrrrrrrrrr",user);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
   }
-  const isPasswordValid = await user.comparePassword(currentPassword);
-  if (!isPasswordValid) {
-      return res.status(400).json({ error: "Current password is incorrect" });
-  }
-  // Check if the new password meets your criteria
   if (newPassword.length < 6) {
     return res.status(400).json({ error: "Password must be at least 6 characters long" });
 }

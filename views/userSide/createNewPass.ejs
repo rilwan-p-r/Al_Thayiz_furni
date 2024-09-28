@@ -73,12 +73,8 @@
     <div class="container">
         <div class="row justify-content-center"> <!-- Added justify-content-center class -->
             <div class="col-sm-12"> <!-- Changed from col-sm-6 to col-sm-12 -->
-                <form id="passwordChangeForm" action="/createNewPass" method="POST">
-                    <label for="currentPassword">Current Password</label>
-                    <div class="form-group pass_show"> 
-                        <input type="hidden" name="email" value="<%= email %>">
-                        <input type="password" id="currentPassword" name="currentPassword" class="form-control" placeholder="Current Password"> 
-                    </div> 
+                <form id="passwordChangeForm" action="/createNewPass" method="POST"> 
+                    <input type="hidden" name="email" value="<%= email %>">
                     <label for="newPassword">New Password</label>
                     <div class="form-group pass_show"> 
                         <input type="password" id="newPassword" name="newPassword" class="form-control" placeholder="New Password"> 
@@ -96,16 +92,13 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const passwordChangeForm = document.getElementById('passwordChangeForm');
-
         passwordChangeForm.addEventListener('submit', async function (event) {
             event.preventDefault();
-
             const formData = new FormData(passwordChangeForm);
             const email = formData.get('email');
             const currentPassword = formData.get('currentPassword');
             const newPassword = formData.get('newPassword');
             const confirmPassword = formData.get('confirmPassword');
-
             try {
                 const response = await fetch('/createNewPass', {
                     method: 'POST',
@@ -114,7 +107,6 @@
                     },
                     body: JSON.stringify({ email, currentPassword, newPassword, confirmPassword })
                 });
-
                 if (response.ok) {
                     // Redirect to login page or do something else on success
                     window.location.href = '/login';
